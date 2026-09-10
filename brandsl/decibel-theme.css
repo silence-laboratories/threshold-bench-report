@@ -88,13 +88,13 @@ h1 { font-weight: 600; letter-spacing: -0.025em; line-height: 1; }
 h2 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
 h3 { font-weight: 600; letter-spacing: -0.6px; }
 
-/* ---------- product nav bar ---------- */
+/* ---------- product nav bar (dark band, white wordmark) ---------- */
 .brandbar {
   position: sticky; top: 0; z-index: 60;
   display: flex; align-items: center; justify-content: space-between;
   height: 64px; padding: 0 clamp(16px, 4vw, 24px);
-  background: var(--page);
-  border-bottom: 1px solid var(--border);
+  background: #162235;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 .brandbar img { height: 26px; width: auto; display: block; }
 .brandbar-cta {
