@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>DKLS23 vs CGGMP21 — 2-of-3 benchmark · Silence Laboratories</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    color-scheme: light;
+    --page:        #f9f9f7;
+    --surface:     #fcfcfb;
+    --surface-2:   #f3f2ee;
+    --ink:         #0b0b0b;
+    --ink-2:       #52514e;
+    --muted:       #898781;
+    --grid:        #e1e0d9;
+    --baseline:    #c3c2b7;
+    --border:      rgba(11,11,11,0.10);
+    --dkls:        #2a78d6;
+    --dkls-soft:   #6da7ec;
+    --dkls-softer: #cde2fb;
+    --dkls-deep:   #184f95;
+    --cggmp:       #eb6834;
+    --cggmp-soft:  #f2a37e;
+    --cggmp-deep:  #a8360f;
+    --good:        #006300;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page:        #0d0d0d;
+      --surface:     #1a1a19;
+      --surface-2:   #201f1d;
+      --ink:         #ffffff;
+      --ink-2:       #c3c2b7;
+      --muted:       #8f8d87;
+      --grid:        #2c2c2a;
+      --baseline:    #383835;
+      --border:      rgba(255,255,255,0.12);
+      --dkls:        #3987e5;
+      --dkls-soft:   #2a78d6;
+      --dkls-softer: #184f95;
+      --dkls-deep:   #86b6ef;
+      --cggmp:       #d95926;
+      --cggmp-soft:  #a54a24;
+      --cggmp-deep:  #f08d63;
+      --good:        #0ca30c;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page:        #0d0d0d;
+    --surface:     #1a1a19;
+    --surface-2:   #201f1d;
+    --ink:         #ffffff;
+    --ink-2:       #c3c2b7;
+    --muted:       #8f8d87;
+    --grid:        #2c2c2a;
+    --baseline:    #383835;
+    --border:      rgba(255,255,255,0.12);
+    --dkls:        #3987e5;
+    --dkls-soft:   #2a78d6;
+    --dkls-softer: #184f95;
+    --dkls-deep:   #86b6ef;
+    --cggmp:       #d95926;
+    --cggmp-soft:  #a54a24;
+    --cggmp-deep:  #f08d63;
+    --good:        #0ca30c;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+  }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace; }
+  h1, h2, h3 { text-wrap: balance; font-weight: 600; }
+  h1 { font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.35rem); letter-spacing: -0.01em; margin: 0; }
+  h2 { font-size: 1.35rem; margin: 0 0 4px; }
+  h3 { font-size: 0.98rem; margin: 0 0 2px; color: var(--ink); }
+  p { margin: 0 0 12px; max-width: 66ch; color: var(--ink-2); }
+  a { color: var(--dkls); }
+
+  .shell { display: flex; max-width: 1280px; margin: 0 auto; }
+
+  nav.toc {
+    position: sticky; top: 0; align-self: flex-start; height: 100vh;
+    width: 220px; flex: none; padding: 32px 18px 32px 28px;
+    overflow-y: auto; display: flex; flex-direction: column; gap: 2px;
+  }
+  nav.toc .brand {
+    font-family: "IBM Plex Mono"; font-size: 0.72rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 18px;
+  }
+  nav.toc a {
+    color: var(--ink-2); text-decoration: none; font-size: 0.86rem;
+    padding: 6px 10px; border-radius: 6px; border-left: 2px solid transparent;
+  }
+  nav.toc a:hover { color: var(--ink); background: var(--surface-2); }
+
+  main { flex: 1; min-width: 0; padding: 40px clamp(20px, 4vw, 56px) 100px; }
+
+  header.hero {
+    padding-bottom: 28px; margin-bottom: 28px; border-bottom: 1px solid var(--border);
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .chip {
+    font-family: "IBM Plex Mono"; font-size: 0.74rem; color: var(--ink-2);
+    background: var(--surface-2); border: 1px solid var(--border);
+    padding: 5px 10px; border-radius: 999px; white-space: nowrap;
+  }
+
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px; margin: 20px 0 8px;
+  }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .kpi .val {
+    font-family: "IBM Plex Mono"; font-weight: 600; font-size: 1.7rem;
+    color: var(--dkls); font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .kpi .label { font-size: 0.82rem; color: var(--ink-2); margin-top: 6px; }
+
+  section { margin: 56px 0; scroll-margin-top: 24px; }
+  section .section-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  .section-num { font-family: "IBM Plex Mono"; color: var(--muted); font-size: 0.85rem; }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px clamp(14px, 2vw, 24px) 16px; margin-top: 18px;
+  }
+  .panel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .panel-grid { grid-template-columns: 1fr; } }
+  .panel-grid.two { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 760px) { .panel-grid.two { grid-template-columns: 1fr; } }
+
+  .chart-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 2px; }
+  .chart-sub { font-size: 0.74rem; color: var(--muted); margin-bottom: 8px; }
+  .legend { display: flex; gap: 14px; font-size: 0.76rem; color: var(--ink-2); margin: 8px 0 0; flex-wrap: wrap; }
+  .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+  .panel svg { display: block; width: 100%; height: auto; }
+  svg text { font-family: "IBM Plex Mono", monospace; fill: var(--ink-2); }
+  svg .axis-label { fill: var(--muted); }
+  svg .grid-line { stroke: var(--grid); stroke-width: 1; }
+  svg .baseline { stroke: var(--baseline); stroke-width: 1; }
+  svg .value-label { fill: var(--ink); font-weight: 500; }
+  svg .value-label.on-dkls { fill: var(--dkls); }
+  svg .value-label.on-cggmp { fill: var(--cggmp); }
+
+  .table-wrap { overflow-x: auto; margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.83rem; min-width: 560px; }
+  thead th {
+    text-align: right; font-family: "IBM Plex Mono"; font-weight: 500; font-size: 0.72rem;
+    letter-spacing: 0.02em; text-transform: uppercase; color: var(--muted);
+    padding: 10px 14px; border-bottom: 1px solid var(--border); white-space: nowrap;
+    background: var(--surface-2);
+  }
+  thead th:first-child, thead th:nth-child(2) { text-align: left; }
+  tbody td {
+    padding: 8px 14px; border-bottom: 1px solid var(--border); text-align: right;
+    font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink);
+  }
+  tbody td:first-child, tbody td:nth-child(2) { text-align: left; color: var(--ink-2); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.group-start td { border-top: 1px solid var(--border); }
+  .tag-dkls { color: var(--dkls); font-weight: 600; }
+  .tag-cggmp { color: var(--cggmp); font-weight: 600; }
+  .pill-good { color: var(--good); font-size: 0.72rem; }
+
+  .callout {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 18px; margin-top: 16px; font-size: 0.88rem; color: var(--ink-2);
+  }
+  .callout strong { color: var(--ink); }
+
+  dl.method { display: grid; grid-template-columns: 200px 1fr; gap: 10px 20px; margin-top: 14px; }
+  dl.method dt { font-family: "IBM Plex Mono"; font-size: 0.76rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; padding-top: 2px; }
+  dl.method dd { margin: 0; color: var(--ink-2); font-size: 0.9rem; }
+  @media (max-width: 640px) { dl.method { grid-template-columns: 1fr; } dl.method dt { padding-top: 10px; } }
+
+  footer {
+    margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--border);
+    font-size: 0.85rem; color: var(--ink-2); max-width: 66ch;
+  }
+
+  nav.toc .toc-group {
+    font-family: "IBM Plex Mono"; font-size: 0.68rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--muted);
+    margin: 14px 0 4px; padding: 0 10px;
+  }
+
+  .group-divider {
+    display: flex; align-items: center; gap: 14px;
+    margin: 64px 0 -16px; color: var(--muted);
+    font-family: "IBM Plex Mono"; font-size: 0.74rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .group-divider::after {
+    content: ""; flex: 1; height: 1px; background: var(--border);
+  }
+
+  @media print {
+    nav.toc { display: none; }
+    .shell { display: block; max-width: none; }
+    main { padding: 0; }
+    body { background: #fff; }
+    section { margin: 26px 0; }
+    .panel, .table-wrap, section { break-inside: auto; }
+    .panel-grid > div, tr, .callout, .kpi { break-inside: avoid; }
+    .table-wrap { overflow: visible; }
+    table { min-width: 0; font-size: 0.72rem; }
+    thead { display: table-header-group; }
+    .panel-grid { grid-template-columns: 1fr 1fr !important; }
+    h1, h2, h3 { break-after: avoid; }
+    p, dl.method { break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+  }
+
+  @media (max-width: 860px) {
+    .shell { display: block; }
+    nav.toc { position: static; width: auto; height: auto; padding: 20px clamp(20px,4vw,56px) 0; flex-direction: row; overflow-x: auto; white-space: nowrap; gap: 4px; }
+    nav.toc .brand { display: none; }
+    main { padding-top: 20px; }
+  }
+</style>
+
+<style id="brandsl-theme">
+  /* Silence Laboratories design system — navy #0F2446, Archivo, hairline cards, pill actions. */
+  :root {
+    color-scheme: light;
+    --page:        #ffffff;
+    --surface:     #ffffff;
+    --surface-2:   #f5f7fa;
+    --ink:         #0f2446;
+    --ink-2:       #57667d;
+    --muted:       #8792a2;
+    --grid:        #e7e9ec;
+    --baseline:    #d0d4db;
+    --border:      #e7e9ec;
+    --dkls:        #0f2446;
+    --dkls-soft:   #1e4176;
+    --dkls-softer: #dbe3f2;
+    --dkls-deep:   #050b14;
+    --cggmp:       #38a8f8;
+    --cggmp-soft:  #7cc0f7;
+    --cggmp-deep:  #0f6fbd;
+    --good:        #1f7a4d;
+
+    --sl-font-display: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --sl-font-body: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --sl-font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    --sl-navy-900: #0a1a31;
+    --sl-navy-800: #0f2446;
+    --sl-navy-700: #16325c;
+    --sl-navy-600: #1e4176;
+    --sl-gray-050: #f5f7fa;
+    --sl-gray-100: #e7e9ec;
+    --sl-gray-200: #d0d4db;
+    --sl-gray-300: #caced6;
+    --sl-gray-400: #959ead;
+    --sl-gray-500: #8792a2;
+    --sl-gray-700: #57667d;
+    --sl-sky: #38a8f8;
+    --sl-on-navy-08: rgba(255, 255, 255, 0.08);
+    --sl-on-navy-12: rgba(255, 255, 255, 0.12);
+    --sl-on-navy-64: rgba(255, 255, 255, 0.64);
+    --sl-radius-sm: 8px;
+    --sl-radius-md: 12px;
+    --sl-radius-lg: 16px;
+    --sl-radius-xl: 24px;
+    --sl-radius-pill: 999px;
+    --sl-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --sl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --sl-duration-base: 240ms;
+  }
+  /* This variant keeps the design system's light page. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: light;
+      --page: #ffffff; --surface: #ffffff; --surface-2: #f5f7fa;
+      --ink: #0f2446; --ink-2: #57667d; --muted: #8792a2;
+      --grid: #e7e9ec; --baseline: #d0d4db; --border: #e7e9ec;
+      --dkls: #0f2446; --dkls-soft: #1e4176; --dkls-softer: #dbe3f2; --dkls-deep: #050b14;
+      --cggmp: #38a8f8; --cggmp-soft: #7cc0f7; --cggmp-deep: #0f6fbd; --good: #1f7a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: light;
+    --page: #ffffff; --surface: #ffffff; --surface-2: #f5f7fa;
+    --ink: #0f2446; --ink-2: #57667d; --muted: #8792a2;
+    --grid: #e7e9ec; --baseline: #d0d4db; --border: #e7e9ec;
+    --dkls: #0f2446; --dkls-soft: #1e4176; --dkls-softer: #dbe3f2; --dkls-deep: #050b14;
+    --cggmp: #38a8f8; --cggmp-soft: #7cc0f7; --cggmp-deep: #0f6fbd; --good: #1f7a4d;
+  }
+
+  body { font-family: var(--sl-font-body); font-size: 16px; line-height: 1.6; background: var(--page); color: var(--ink-2); }
+  h1, h2, h3, .chart-title { font-family: var(--sl-font-display); }
+  h1 { font-size: clamp(2.5rem, 1.6rem + 3.2vw, 4.25rem); line-height: 1.05; letter-spacing: -0.02em; font-weight: 600; }
+  h2 { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2rem); line-height: 1.18; letter-spacing: -0.01em; font-weight: 600; color: var(--ink); }
+  h3 { font-weight: 600; }
+  p { color: var(--ink-2); }
+  a { color: var(--sl-navy-700); }
+  .mono, code, kbd, pre { font-family: var(--sl-font-mono); }
+
+  /* ---------- nav bar ---------- */
+  .brandbar {
+    position: sticky; top: 0; z-index: 60;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 72px; padding: 0 clamp(20px, 4vw, 32px);
+    background: var(--sl-navy-800);
+    border-bottom: 1px solid var(--sl-on-navy-12);
+  }
+  .brandbar img { height: 28px; width: auto; display: block; }
+  .brandbar-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: var(--sl-navy-800);
+    font-size: 14px; font-weight: 500; line-height: 1; text-decoration: none;
+    padding: 13px 20px; border-radius: var(--sl-radius-pill);
+    transition: background 120ms var(--sl-ease-standard);
+  }
+  .brandbar-cta:hover { background: var(--sl-gray-100); }
+
+  /* ---------- side toc ---------- */
+  nav.toc { top: 72px; height: calc(100vh - 72px); width: 210px; padding: 44px 20px 44px 0; border-right: 1px solid var(--sl-gray-100); }
+  nav.toc .brand { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sl-gray-500); }
+  nav.toc a { font-family: var(--sl-font-body); font-size: 14px; color: var(--sl-gray-700); border-radius: var(--sl-radius-sm); padding: 6px 10px; border-left: none; transition: color 120ms var(--sl-ease-standard), background 120ms var(--sl-ease-standard); }
+  nav.toc a:hover { color: var(--ink); background: var(--sl-gray-050); }
+  nav.toc .toc-group { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; color: var(--sl-gray-400); }
+
+  main { padding: 40px clamp(20px, 4vw, 32px) 96px; }
+
+  /* ---------- hero band ---------- */
+  header.hero {
+    background: var(--sl-navy-800); border: 1px solid var(--sl-on-navy-12);
+    border-radius: var(--sl-radius-xl);
+    padding: 48px clamp(24px, 4vw, 56px) 44px; margin: 0 0 8px;
+  }
+  header.hero .eyebrow {
+    margin: 0 0 18px; font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--sl-on-navy-64);
+  }
+  header.hero h1 { color: #fff; }
+  header.hero p { color: var(--sl-on-navy-64); }
+  header.hero p strong { color: #fff; }
+  header.hero a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+  header.hero .kpi-row { margin-top: 32px; }
+  header.hero .kpi { background: var(--sl-navy-700); border: 1px solid var(--sl-on-navy-12); border-radius: var(--sl-radius-lg); }
+  header.hero .kpi .val { color: #fff !important; }
+  header.hero .kpi .label { color: var(--sl-on-navy-64); }
+
+  .kpi-row { gap: 16px; }
+  .kpi { background: var(--surface); border: 1px solid var(--sl-gray-100); border-radius: var(--sl-radius-xl); padding: 20px 22px; transition: transform var(--sl-duration-base) var(--sl-ease-out), border-color var(--sl-duration-base) var(--sl-ease-standard); }
+  .kpi:hover { transform: translateY(-2px); border-color: var(--sl-gray-300); }
+  .kpi .val { font-family: var(--sl-font-display); font-size: 2.5rem; font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
+  .kpi .label { font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+
+  /* ---------- sections ---------- */
+  section { margin: 96px 0; }
+  .section-num { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sl-gray-500); }
+  .section-head { gap: 12px; margin-bottom: 10px; }
+  .group-divider { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; color: var(--sl-gray-500); margin-top: 96px; }
+  .group-divider::after { background: var(--sl-gray-100); }
+
+  /* ---------- cards ---------- */
+  .panel { border: 1px solid var(--sl-gray-100); border-radius: var(--sl-radius-xl); padding: 24px clamp(16px, 2vw, 28px) 20px; transition: transform var(--sl-duration-base) var(--sl-ease-out), border-color var(--sl-duration-base) var(--sl-ease-standard); }
+  .panel:hover { transform: translateY(-2px); border-color: var(--sl-gray-300); }
+  .chart-title { font-size: 16px; font-weight: 600; color: var(--ink); }
+  .chart-sub { font-size: 13px; color: var(--sl-gray-500); }
+  .legend { font-size: 14px; color: var(--ink-2); }
+  .legend .sw { border-radius: var(--sl-radius-pill); }
+  svg text { font-family: var(--sl-font-body); fill: var(--sl-gray-700); }
+  svg .axis-label { fill: var(--sl-gray-500); }
+  svg .grid-line { stroke: var(--sl-gray-100); }
+  svg .baseline { stroke: var(--sl-gray-200); }
+
+  /* ---------- tables ---------- */
+  .table-wrap { border: 1px solid var(--sl-gray-100); border-radius: var(--sl-radius-lg); }
+  thead th { background: var(--sl-navy-800); color: #fff; font-family: var(--sl-font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; border-bottom: none; }
+  tbody td { border-bottom: 1px solid var(--sl-gray-100); }
+  tbody td:first-child, tbody td:nth-child(2) { color: var(--ink-2); }
+  tbody tr:hover td { background: var(--sl-gray-050); }
+  tbody tr.group-start td { border-top: 1px solid var(--sl-gray-100); }
+  .tag-dkls { color: var(--sl-navy-800); }
+  .tag-cggmp { color: var(--cggmp-deep); }
+  .pill-good { color: var(--good); }
+
+  /* ---------- callouts / method ---------- */
+  .callout { background: var(--sl-gray-050); border: 1px solid var(--sl-gray-100); border-radius: var(--sl-radius-lg); font-size: 15px; color: var(--ink-2); }
+  .callout strong { color: var(--ink); }
+  .callout.warn { background: var(--sl-navy-800); border-color: transparent; color: var(--sl-on-navy-64); }
+  .callout.warn strong { color: #fff; }
+  dl.method dt { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; color: var(--sl-gray-500); }
+  dl.method dd { color: var(--ink-2); font-size: 15px; }
+
+  /* ---------- closing cta ---------- */
+  .sl-cta { background: var(--sl-navy-800); border-radius: var(--sl-radius-xl); padding: 64px clamp(24px, 4vw, 56px); margin: 96px 0 0; }
+  .sl-eyebrow { margin: 0 0 16px; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sl-on-navy-64); }
+  .sl-cta h2 { color: #fff; font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem); max-width: 24ch; margin: 0 0 32px; }
+  .sl-cta-btn { display: inline-flex; align-items: center; background: #fff; color: var(--sl-navy-800); font-size: 16px; font-weight: 500; line-height: 1; text-decoration: none; padding: 16px 28px; border-radius: var(--sl-radius-pill); transition: background 120ms var(--sl-ease-standard); }
+  .sl-cta-btn:hover { background: var(--sl-gray-100); }
+  .sl-copyright { margin: 32px 0 0; text-align: center; font-size: 14px; color: var(--sl-gray-500); }
+
+  @media print {
+    .brandbar, .sl-cta { display: none; }
+    header.hero { background: none; border: none; padding: 0; }
+    header.hero .eyebrow { color: var(--sl-gray-500); }
+    header.hero h1 { color: var(--ink); }
+    header.hero p, header.hero p strong { color: var(--ink-2); }
+    header.hero .kpi { background: none; border-color: var(--sl-gray-200); }
+    header.hero .kpi .val { color: var(--ink) !important; }
+    header.hero .kpi .label { color: var(--ink-2); }
+    thead th { background: none; color: var(--ink); border-bottom: 1px solid var(--sl-gray-200); }
+  }
+  @media (max-width: 860px) {
+    .brandbar { position: static; }
+    nav.toc { top: 0; height: auto; border-right: none; }
+  }
+</style>
+</head>
+<body>
+<header class="brandbar">
+  <a href="https://silencelaboratories.com/" target="_blank" rel="noopener" aria-label="Silence Laboratories"><img src="silence-logo-night.png" alt="Silence Laboratories"></a>
+  <a class="brandbar-cta" href="https://silencelaboratories.com/" target="_blank" rel="noopener">Learn more <span aria-hidden="true">→</span></a>
+</header>
+<div class="shell">
+  <nav class="toc">
+    <div class="brand">Benchmark</div>
+    <a href="#overview">Overview</a>
+    <a href="#single-request">One request at a time</a>
+    <div class="toc-group">One region</div>
+    <a href="#dsg-matrix">Signing by VM size</a>
+    <a href="#dkg">Key generation</a>
+    <a href="#aux">Key generation with reused aux info</a>
+    <a href="#bandwidth">Bandwidth caps</a>
+    <a href="#rtt">Added network delay</a>
+    <div class="toc-group">Three regions</div>
+    <a href="#cross-region">Across three regions</a>
+    <div class="toc-group">Method</div>
+    <a href="#setup">How this was run</a>
+  </nav>
+
+  <main>
+    <header class="hero" id="overview">
+      <p class="eyebrow">Benchmark · 2-of-3 threshold signatures</p>
+      <h1>DKLS23 vs CGGMP21</h1>
+      <p style="margin-top:14px; max-width:70ch;">Two 2-of-3 threshold signature protocols, benchmarked on plain Ubuntu VMs in Google Cloud. DKLS23 runs from a pinned trio image; CGGMP21 is <span class="mono">LFDT-Lockness/cggmp21@b870883</span>.</p>
+      <p style="max-width:70ch;"><strong>DKG</strong> means generating a key. <strong>DSG</strong> means signing with a key that already exists. Both were measured on three VM sizes at loads from 1 to 200 requests in flight, then again with bandwidth capped, with delay added between the machines, and with the three machines spread across three regions.</p>
+      <p style="max-width:70ch;">The load always comes from a separate machine that is not one of the three parties. <a href="#setup">How this was run</a> covers the setup and where each number comes from.</p>
+
+      <div class="kpi-row" id="hero-kpis"></div>
+    </header>
+
+    <section id="single-request">
+      <div class="section-head"><span class="section-num">01</span><h2>One request at a time</h2></div>
+      <p>One request per row, no concurrency, no repeats. All four runs are on n2d-standard-16 in one region. Files: <span class="mono">oc-single-dkls-dkg.csv</span>, <span class="mono">oc-single-dkls-dsg.csv</span>, <span class="mono">oc-single-cggmp-dkg.csv</span>, <span class="mono">oc-single-cggmp-dsg.csv</span>.</p>
+
+      <div class="table-wrap">
+        <table id="single-table"></table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-grid two" id="single-charts"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--dkls)"></span>DKLS23</span>
+          <span><span class="sw" style="background:var(--cggmp)"></span>CGGMP21</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="chart-title">What each column is</div>
+        <dl class="method" style="margin-top:12px;">
+          <dt>Request latency</dt>
+          <dd>Timed by the machine sending the request, for one request.</dd>
+          <dt>Party-VM TX and RX</dt>
+          <dd>Bytes leaving and arriving at the party VMs, read from the network counters before and after the run. TX counts each packet once, where it was sent. RX is there as a cross-check on TX, not as a second measurement.</dd>
+          <dt>How many VMs are read</dt>
+          <dd>For CGGMP all three party VMs are read and added up. For DKLS only the VM running the client-party adapter is read, so its rows are one machine, not three. Compare rows within a protocol, not across the two.</dd>
+          <dt>Three-VM CPU</dt>
+          <dd>CPU counters from the three VMs, again read before and after.</dd>
+          <dt>What the bytes include</dt>
+          <dd>The small HTTP request and reply, plus the traffic from reading the counters. These are not pure protocol bytes.</dd>
+          <dt>One sample each</dt>
+          <dd>Every row is a single run. The p50, p90 and p99 columns in those four files all repeat the same one number, so there is no distribution to read.</dd>
+        </dl>
+      </div>
+      <div class="callout"><strong>One note on the CGGMP key generation row:</strong> its Paillier primes were built when the process started, so that work is not inside the time shown.</div>
+    </section>
+
+    <div class="group-divider"><span>One region</span></div>
+
+    <section id="dsg-matrix">
+      <div class="section-head"><span class="section-num">02</span><h2>Signing by VM size</h2></div>
+      <p>Signing at 1, 50, 100 and 200 requests in flight, on three VM sizes, one region, no bandwidth limit. The first three charts show p99 latency by VM size; the last two show throughput.</p>
+
+      <div class="panel">
+        <div class="panel-grid" id="p99-charts"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--dkls)"></span>DKLS23 p99</span>
+          <span><span class="sw" style="background:var(--cggmp)"></span>CGGMP21 p99</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-grid two" id="rps-charts"></div>
+        <div class="legend" id="rps-legend"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="dsg-table"></table>
+      </div>
+      <div class="callout" id="n32-note"></div>
+    </section>
+
+    <section id="dkg">
+      <div class="section-head"><span class="section-num">03</span><h2>Key generation</h2></div>
+      <p>Key generation on the same three VM sizes: one request, then 30 seconds of 5 and 10 at a time. Here CGGMP builds its Paillier aux info during every key generation. Section 04 shows what happens when that work is done once and reused. DKLS has no such step, so its numbers are the same in both sections.</p>
+
+      <div class="panel">
+        <div class="panel-grid two" id="dkg-charts"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--dkls)"></span>DKLS23, single</span>
+          <span><span class="sw" style="background:var(--cggmp)"></span>CGGMP21, single</span>
+        </div>
+        <div class="legend" id="dkg-flood-legend"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="dkg-table"></table>
+      </div>
+    </section>
+
+    <section id="aux">
+      <div class="section-head"><span class="section-num">04</span><h2>Key generation with reused aux info</h2></div>
+      <p>CGGMP needs Paillier aux info — a key and some proofs — before it can generate a key. That work can be done once per party and saved, so later key generations skip it, which is how a production deployment would run it. Measured with <span class="mono">bench-node --reuse-aux</span>. <strong>Cold</strong> rows build the aux info every time, as in section 03. <strong>Warm</strong> rows reuse it.</p>
+
+      <div class="panel">
+        <div class="panel-grid two" id="aux-charts"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--dkls)"></span>aux reused (warm)</span>
+          <span><span class="sw" style="background:var(--cggmp)"></span>aux per keygen (cold)</span>
+        </div>
+        <div class="legend" id="aux-rps-legend"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="aux-table"></table>
+      </div>
+      <div class="callout" id="aux-callout"></div>
+    </section>
+
+    <section id="bandwidth">
+      <div class="section-head"><span class="section-num">05</span><h2>Bandwidth caps</h2></div>
+      <p>Signing with 100 requests in flight on n2d-standard-16, with each VM's outbound bandwidth capped at 20, 10, 5, 3, 2 and 1 Mbit/s. The unlimited point is the same VM size and load from section 02, with no cap. Each capped point is one 20-second run.</p>
+
+      <div class="panel">
+        <div class="panel-grid two" id="bw-charts"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--dkls)"></span>DKLS23</span>
+          <span><span class="sw" style="background:var(--cggmp)"></span>CGGMP21</span>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="bw-table"></table>
+      </div>
+      <div class="callout warn" id="bw-callout"></div>
+    </section>
+
+    <section id="rtt">
+      <div class="section-head"><span class="section-num">06</span><h2>Added network delay</h2></div>
+      <p>Signing with 50 requests in flight on n2d-standard-16, with delay added between the VMs using <span class="mono">tc netem</span>. The ~0 point is the real network in one zone, from section 02. This adds delay and nothing else: no jitter, no packet loss, no bandwidth change. Section 07 has real multi-region numbers.</p>
+
+      <div class="panel">
+        <div class="panel-grid two" id="rtt-charts"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--dkls)"></span>DKLS23</span>
+          <span><span class="sw" style="background:var(--cggmp)"></span>CGGMP21</span>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="rtt-table"></table>
+      </div>
+    </section>
+
+    <div class="group-divider"><span>Three regions</span></div>
+
+    <section id="cross-region">
+      <div class="section-head"><span class="section-num">07</span><h2>Across three regions</h2></div>
+      <p>The three VMs in <span class="mono">europe-west3-a</span>, <span class="mono">europe-north1-a</span> and <span class="mono">us-east1-b</span>, n2d-standard-16, no bandwidth limit. A real network this time, not added delay.</p>
+
+      <div class="panel">
+        <div class="panel-grid two" id="xr-charts"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--dkls)"></span>DKLS23</span>
+          <span><span class="sw" style="background:var(--cggmp)"></span>CGGMP21</span>
+        </div>
+      </div>
+
+      <div class="callout" id="xr-nodes"></div>
+
+      <div class="table-wrap">
+        <table id="xr-table"></table>
+      </div>
+      <div class="callout" id="xr-callout"></div>
+    </section>
+
+    <div class="group-divider"><span>Method</span></div>
+
+    <section id="setup">
+      <div class="section-head"><span class="section-num">08</span><h2>How this was run</h2></div>
+      <p>Each protocol runs three parties, one per VM. A fourth machine sends the load and is not a party.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>VM</th><th>What it runs for CGGMP21</th><th>What it runs for DKLS23</th></tr></thead>
+          <tbody>
+            <tr class="group-start"><td>VM0</td><td>party 0, the hub</td><td class="mono">trio-svc-first</td></tr>
+            <tr><td>VM1</td><td>party 1, a leaf</td><td class="mono">trio-svc-second</td></tr>
+            <tr><td>VM2</td><td>party 2, a leaf</td><td>the client party — an HTTP adapter around <span class="mono">trio-client</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <dl class="method" style="margin-top:2px;">
+          <dt>The load generator</dt>
+          <dd>A fourth machine sends every request. It is not a party, so its CPU time and its network traffic are left out of every number on this page. Two machines were used for this: a driver VM inside the same VPC, and the operator's own workstation. VM2 is always a party, never the generator.</dd>
+          <dt>Where the numbers come from</dt>
+          <dd>Each party VM serves a <span class="mono">/metrics</span> page with CPU and network-interface counters. The runner reads it before and after a run and reports the difference.</dd>
+          <dt>How many VMs each protocol's counters cover</dt>
+          <dd>For CGGMP the runner reads all three party VMs and adds them up. For DKLS it reads only the VM running the client-party adapter. So a DKLS CPU or byte figure is one machine and a CGGMP one is three machines added together. They are not directly comparable, and the difference is larger for CPU than the numbers alone suggest.</dd>
+          <dt>What RPS means</dt>
+          <dd>Successful operations divided by how long the run lasted, timed at the generator, with a fixed number of requests in flight the whole time.</dd>
+          <dt>What counts as one request</dt>
+          <dd>One CGGMP key generation is three requests sent at once, one CGGMP signature is two (the 2-of-3 signer set), and one DKLS operation is one call to the adapter.</dd>
+          <dt>How CGGMP talks between parties</dt>
+          <dd>One websocket per run of the protocol, carrying raw <span class="mono">bincode</span> frames, with a barrier between rounds and a thread dedicated to accepting leaf connections. Paillier primes are made when the process starts, not during a request.</dd>
+          <dt>How DKLS talks between parties</dt>
+          <dd>Its own trio relay. It was not changed at any point in this work.</dd>
+          <dt>Failed requests</dt>
+          <dd>Five cells have one or two failures out of hundreds or thousands of requests. Every other cell has none. The counts are in each table's Success column.</dd>
+          <dt>The same everywhere</dt>
+          <dd>2-of-3 (t = 2, n = 3), plain Ubuntu 24.04, no Confidential Space, three parties on three VMs of the same size.</dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="sl-cta">
+      <p class="sl-eyebrow">Get in touch</p>
+      <h2>Unlock privacy preserving collaboration with Silence Laboratories</h2>
+      <a class="sl-cta-btn" href="https://silencelaboratories.com/" target="_blank" rel="noopener">Book a Call</a>
+    </section>
+    <p class="sl-copyright">© 2026 Silence Laboratories</p>  </main>
+</div>
+
+<script>
+(function () {
+  const SVGNS = "http://www.w3.org/2000/svg";
+  function el(name, attrs, children) {
+    const n = document.createElementNS(SVGNS, name);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    (children || []).forEach(c => n.appendChild(c));
+    return n;
+  }
+  function text(x, y, str, cls, size, anchor, weight) {
+    const t = el("text", { x, y, class: cls || "", "font-size": size || 10.5, "text-anchor": anchor || "start" });
+    if (weight) t.setAttribute("font-weight", weight);
+    t.textContent = str;
+    return t;
+  }
+  function fmt(n, digits) {
+    if (n === undefined || n === null) return "";
+    if (digits === undefined) digits = n >= 100 ? 0 : n >= 10 ? 1 : 2;
+    return n.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  }
+  function fmtMs(n) {
+    if (n >= 10000) return fmt(n / 1000, 1) + "s";
+    return fmt(n, 0) + "ms";
+  }
+
+  // ---------- Grouped bar chart (VM scaling panels) ----------
+  function groupedBarChart(container, opts) {
+    const W = opts.width || 340, H = opts.height || 230;
+    const M = { top: 14, right: 12, bottom: 34, left: 54 };
+    const plotW = W - M.left - M.right, plotH = H - M.top - M.bottom;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "xMidYMid meet", role: "img", "aria-label": opts.aria || "" });
+
+    // a group may leave a slot empty (null) so its bar keeps a fixed colour position
+    const allVals = opts.groups.flatMap(g => g.values).filter(v => v !== null && v !== undefined);
+    let y, tickVals;
+    if (opts.log) {
+      // decade-aligned log scale, needed when the two series are orders of magnitude apart
+      const lo = Math.floor(Math.log10(Math.min(...allVals)));
+      const hi = Math.ceil(Math.log10(Math.max(...allVals)));
+      y = v => M.top + plotH - ((Math.log10(Math.max(v, Math.pow(10, lo))) - lo) / (hi - lo)) * plotH;
+      tickVals = [];
+      for (let d = lo; d <= hi; d++) tickVals.push(Math.pow(10, d));
+    } else {
+      const maxV = Math.max(...allVals) * 1.12;
+      y = v => M.top + plotH - (v / maxV) * plotH;
+      const ticks = opts.yTicks || 4;
+      tickVals = [];
+      for (let i = 0; i <= ticks; i++) tickVals.push((maxV / ticks) * i);
+    }
+
+    // gridlines + y ticks
+    tickVals.forEach(v => {
+      const yy = y(v);
+      svg.appendChild(el("line", { x1: M.left, x2: W - M.right, y1: yy, y2: yy, class: "grid-line" }));
+      svg.appendChild(text(M.left - 8, yy + 3, opts.yFormat ? opts.yFormat(v) : fmt(v, 0), "axis-label", 9, "end"));
+    });
+    svg.appendChild(el("line", { x1: M.left, x2: W - M.right, y1: M.top + plotH, y2: M.top + plotH, class: "baseline" }));
+
+    const groupW = plotW / opts.groups.length;
+    const barsPerGroup = opts.groups[0].values.length;
+    const barGap = opts.barGap === undefined ? 3 : opts.barGap;
+    const barW = Math.min(opts.barMax || 16, (groupW - 16) / barsPerGroup - barGap);
+
+    opts.groups.forEach((g, gi) => {
+      const gx = M.left + gi * groupW + groupW / 2;
+      const totalW = barsPerGroup * barW + (barsPerGroup - 1) * barGap;
+      const startX = gx - totalW / 2;
+      g.values.forEach((v, vi) => {
+        if (v === null || v === undefined) return;
+        const bx = startX + vi * (barW + barGap);
+        const by = y(v);
+        const bh = M.top + plotH - by;
+        svg.appendChild(el("rect", {
+          x: bx, y: by, width: barW, height: Math.max(bh, 1.5), rx: 3,
+          fill: opts.colors[vi]
+        }));
+        if (opts.barLabel) {
+          svg.appendChild(text(bx + barW / 2, by - 4, opts.barLabel(v), "value-label", 8.5, "middle", 600));
+        }
+      });
+      svg.appendChild(text(gx, M.top + plotH + 18, g.label, "axis-label", 10, "middle"));
+    });
+
+    if (opts.xAxisLabel) svg.appendChild(text(W / 2, H - 2, opts.xAxisLabel, "axis-label", 9.5, "middle"));
+    container.appendChild(svg);
+  }
+
+  // ---------- Line chart (bandwidth / RTT sweeps) ----------
+  function lineChart(container, opts) {
+    const W = opts.width || 340, H = opts.height || 240;
+    const M = { top: 18, right: 16, bottom: 36, left: 50 };
+    const plotW = W - M.left - M.right, plotH = H - M.top - M.bottom;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "xMidYMid meet", role: "img", "aria-label": opts.aria || "" });
+
+    const n = opts.xLabels.length;
+    const x = i => M.left + (n === 1 ? plotW / 2 : (plotW * i) / (n - 1));
+
+    const allVals = opts.series.flatMap(s => s.values);
+    let minV, maxV, yFn;
+    if (opts.log) {
+      minV = Math.log10(Math.max(Math.min(...allVals) * 0.7, 0.001));
+      maxV = Math.log10(Math.max(...allVals) * 1.6);
+      yFn = v => M.top + plotH - ((Math.log10(v) - minV) / (maxV - minV)) * plotH;
+    } else {
+      minV = 0; maxV = Math.max(...allVals) * 1.15;
+      yFn = v => M.top + plotH - ((v - minV) / (maxV - minV)) * plotH;
+    }
+
+    const ticks = opts.yTickVals || [];
+    ticks.forEach(v => {
+      const yy = yFn(v);
+      svg.appendChild(el("line", { x1: M.left, x2: W - M.right, y1: yy, y2: yy, class: "grid-line" }));
+      svg.appendChild(text(M.left - 8, yy + 3, opts.yFormat ? opts.yFormat(v) : fmt(v, 0), "axis-label", 9, "end"));
+    });
+    svg.appendChild(el("line", { x1: M.left, x2: W - M.right, y1: M.top + plotH, y2: M.top + plotH, class: "baseline" }));
+
+    // centred x labels, clamped so the first/last can never spill past the viewBox
+    opts.xLabels.forEach((lab, i) => {
+      const half = String(lab).length * 2.75 + 1;
+      const cx = Math.min(Math.max(x(i), half), W - half);
+      svg.appendChild(text(cx, M.top + plotH + 18, lab, "axis-label", 9.5, "middle"));
+    });
+
+    // draw lines + points first, collect each series' plotted points
+    const seriesPts = opts.series.map(s => {
+      const pts = s.values.map((v, i) => [x(i), yFn(v)]);
+      const path = pts.map((p, i) => (i === 0 ? "M" : "L") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+      svg.appendChild(el("path", { d: path, fill: "none", stroke: s.color, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" }));
+      pts.forEach(p => svg.appendChild(el("circle", { cx: p[0], cy: p[1], r: 3.2, fill: s.color })));
+      return pts;
+    });
+
+    // de-conflict direct labels that land close together at the same x (shared endpoint)
+    function placeLabels(items) {
+      items.sort((a, b) => a.y - b.y);
+      for (let i = 1; i < items.length; i++) {
+        if (items[i].y - items[i - 1].y < 13) items[i].y = items[i - 1].y + 13;
+      }
+      items.forEach(it => {
+        // keep the first/last label inside the viewBox instead of spilling past the edge
+        const half = String(it.txt).length * 2.9 + 1;
+        const cx = Math.min(Math.max(it.x, M.left + half - 8), W - half);
+        svg.appendChild(text(cx, it.y, it.txt, "value-label", 10, "middle", 600));
+      });
+    }
+
+    placeLabels(opts.series.map((s, i) => {
+      const last = seriesPts[i][seriesPts[i].length - 1];
+      const lv = s.values[s.values.length - 1];
+      return { x: last[0], y: last[1] - 8, txt: s.labelFormat ? s.labelFormat(lv) : fmt(lv, 1) };
+    }));
+
+    if (opts.labelFirst) {
+      placeLabels(opts.series.map((s, i) => {
+        const first = seriesPts[i][0];
+        const fv = s.values[0];
+        return { x: first[0], y: first[1] - 8, txt: s.labelFormat ? s.labelFormat(fv) : fmt(fv, 1) };
+      }));
+    }
+
+    if (opts.xAxisLabel) svg.appendChild(text(W / 2, H - 2, opts.xAxisLabel, "axis-label", 9.5, "middle"));
+    container.appendChild(svg);
+  }
+
+  // ---------- Simple two-bar log comparison ----------
+  function compareBars(container, opts) {
+    const W = opts.width || 340, H = opts.height || 200;
+    // reserve enough right-side room for the widest value label so it can never clip past the viewBox
+    const maxLabelLen = Math.max(...opts.items.map(it => it.display.length));
+    const M = { top: 16, right: Math.max(16, maxLabelLen * 7.4 + 16), bottom: 14, left: 8 };
+    const plotW = W - M.left - M.right;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "xMidYMid meet", role: "img", "aria-label": opts.aria || "" });
+
+    const maxLog = Math.log10(Math.max(...opts.items.map(it => it.value)) * 1.15);
+    const minLog = Math.log10(Math.min(...opts.items.map(it => it.value)) * 0.5);
+    const scale = v => ((Math.log10(v) - minLog) / (maxLog - minLog)) * plotW;
+
+    const rowH = (H - M.top - M.bottom) / opts.items.length;
+    const barH = Math.min(30, rowH * 0.5);
+
+    opts.items.forEach((it, i) => {
+      const cy = M.top + rowH * i + rowH / 2;
+      const w = Math.max(scale(it.value), 3);
+      svg.appendChild(text(M.left, cy - barH / 2 - 5, it.name, "chart-sub", 10, "start"));
+      svg.appendChild(el("rect", { x: M.left, y: cy - barH / 2, width: w, height: barH, rx: 4, fill: it.color }));
+      svg.appendChild(text(M.left + w + 8, cy + 4, it.display, "value-label", 12, "start", 600));
+    });
+    container.appendChild(svg);
+  }
+
+  // ====== DATA ======
+  const D = {"single":[{"op":"DKG","proto":"dkls","succ":1,"req":1,"p50":564.502,"cpu":2.983,"tx":461295,"rx":461223},{"op":"DKG","proto":"cggmp","succ":1,"req":1,"p50":25914.497,"cpu":3.786,"tx":2950281,"rx":2952786},{"op":"DSG","proto":"dkls","succ":1,"req":1,"p50":147.357,"cpu":0.359,"tx":125127,"rx":125145},{"op":"DSG","proto":"cggmp","succ":1,"req":1,"p50":2043.426,"cpu":3.026,"tx":92797,"rx":92615}],"tiers":[{"name":"n2d-standard-8","short":"n2d-8","cores":8},{"name":"n2d-standard-16","short":"n2d-16","cores":16},{"name":"n2d-standard-32","short":"n2d-32","cores":32}],"conc":[1,50,100,200],"dsg":{"n2d-standard-8":{"dkls":[{"c":1,"req":329,"succ":329,"err":0,"rps":16.419,"p50":60.839,"p90":61.509,"p99":62.236,"cpu":2.225,"txop":117743.064,"rxop":117932.492},{"c":50,"req":6282,"succ":6281,"err":1,"rps":312.151,"p50":154.586,"p90":212.997,"p99":257.157,"cpu":57.853,"txop":117724.982,"rxop":117915.276},{"c":100,"req":6327,"succ":6327,"err":0,"rps":313.121,"p50":315.254,"p90":451.486,"p99":534.955,"cpu":58.33,"txop":117849.406,"rxop":118049.363},{"c":200,"req":6305,"succ":6305,"err":0,"rps":308.952,"p50":657.143,"p90":879.55,"p99":1211.293,"cpu":57.778,"txop":117653.309,"rxop":117878.239}],"cggmp":[{"c":1,"req":10,"succ":10,"err":0,"rps":0.492,"p50":2060.11,"p90":2075.327,"p99":2081.57,"cpu":6.363,"txop":93012.6,"rxop":93423.1},{"c":50,"req":85,"succ":85,"err":0,"rps":2.53,"p50":18006.699,"p90":20349.72,"p99":21429.718,"cpu":62.379,"txop":90618.988,"rxop":90870.765},{"c":100,"req":100,"succ":100,"err":0,"rps":2.431,"p50":36794.324,"p90":40456.092,"p99":40975.667,"cpu":60.272,"txop":89961.45,"rxop":90231.06},{"c":200,"req":200,"succ":200,"err":0,"rps":2.595,"p50":63543.21,"p90":75479.27,"p99":76943.839,"cpu":64.388,"txop":90124.395,"rxop":90348.725}]},"n2d-standard-16":{"dkls":[{"c":1,"req":324,"succ":324,"err":0,"rps":16.196,"p50":61.695,"p90":62.409,"p99":62.789,"cpu":1.167,"txop":118039.577,"rxop":118230.623},{"c":50,"req":10609,"succ":10609,"err":0,"rps":528.123,"p50":92.321,"p90":110.358,"p99":130.008,"cpu":50.199,"txop":117684.128,"rxop":117868.299},{"c":100,"req":11602,"succ":11602,"err":0,"rps":575.96,"p50":162.193,"p90":244.839,"p99":325.692,"cpu":55.1,"txop":118154.162,"rxop":118336.547},{"c":200,"req":11733,"succ":11733,"err":0,"rps":579.46,"p50":316.397,"p90":539.729,"p99":694.546,"cpu":55.576,"txop":118539.546,"rxop":118726.485}],"cggmp":[{"c":1,"req":10,"succ":10,"err":0,"rps":0.463,"p50":2140.231,"p90":2150.279,"p99":2153.226,"cpu":2.998,"txop":93362.5,"rxop":94139.4},{"c":50,"req":143,"succ":143,"err":0,"rps":5.162,"p50":9021.308,"p90":10220.472,"p99":10898.025,"cpu":63.439,"txop":90074.797,"rxop":90225.182},{"c":100,"req":100,"succ":100,"err":0,"rps":5.266,"p50":17209.8,"p90":18694.819,"p99":18840.006,"cpu":66.105,"txop":89517.01,"rxop":89763.7},{"c":200,"req":200,"succ":200,"err":0,"rps":5.159,"p50":30474.548,"p90":37449.093,"p99":38544.375,"cpu":64.309,"txop":89332.04,"rxop":89536.185}]},"n2d-standard-32":{"dkls":[{"c":1,"req":316,"succ":316,"err":0,"rps":15.789,"p50":63.161,"p90":63.886,"p99":64.719,"cpu":0.636,"txop":117859.826,"rxop":118058.057},{"c":50,"req":12422,"succ":12422,"err":0,"rps":618.341,"p50":79.641,"p90":87.797,"p99":98.298,"cpu":33.427,"txop":117775.885,"rxop":117962.863},{"c":100,"req":16588,"succ":16588,"err":0,"rps":824.753,"p50":116.512,"p90":149.985,"p99":188.595,"cpu":45.582,"txop":117970.831,"rxop":118150.551},{"c":200,"req":18433,"succ":18433,"err":0,"rps":910.584,"p50":207.459,"p90":300.749,"p99":396.066,"cpu":49.503,"txop":119829.287,"rxop":119995.362}],"cggmp":[{"c":1,"req":10,"succ":10,"err":0,"rps":0.498,"p50":2044.785,"p90":2064.178,"p99":2068.256,"cpu":1.606,"txop":87164.7,"rxop":87009.6},{"c":50,"req":233,"succ":233,"err":0,"rps":10.135,"p50":4644.165,"p90":5458.192,"p99":6236.584,"cpu":60.348,"txop":89095.687,"rxop":89435.687},{"c":100,"req":267,"succ":267,"err":0,"rps":10.433,"p50":8603.66,"p90":11191.807,"p99":14072.534,"cpu":65.146,"txop":88007.382,"rxop":88184.36},{"c":200,"req":322,"succ":322,"err":0,"rps":10.522,"p50":14857.81,"p90":25746.711,"p99":29637.222,"cpu":65.872,"txop":88739.851,"rxop":88886.419}]}},"dkg1":{"n2d-standard-8":{"dkls":{"c":1,"req":1,"succ":1,"err":0,"rps":1.965,"p50":498.415,"p90":498.415,"p99":498.415,"cpu":7.252,"txop":451436.0,"rxop":451111.0},"cggmp":{"c":1,"req":1,"succ":1,"err":0,"rps":0.038,"p50":26223.284,"p90":26223.284,"p99":26223.284,"cpu":7.659,"txop":3078979.0,"rxop":3064953.0}},"n2d-standard-16":{"dkls":{"c":1,"req":1,"succ":1,"err":0,"rps":2.016,"p50":486.668,"p90":486.668,"p99":486.668,"cpu":3.723,"txop":451436.0,"rxop":451111.0},"cggmp":{"c":1,"req":1,"succ":1,"err":0,"rps":0.039,"p50":25724.523,"p90":25724.523,"p99":25724.523,"cpu":3.81,"txop":2950175.0,"rxop":2951305.0}},"n2d-standard-32":{"dkls":{"c":1,"req":1,"succ":1,"err":0,"rps":1.797,"p50":547.23,"p90":547.23,"p99":547.23,"cpu":1.531,"txop":451436.0,"rxop":451111.0},"cggmp":{"c":1,"req":1,"succ":1,"err":0,"rps":0.039,"p50":25775.164,"p90":25775.164,"p99":25775.164,"cpu":1.928,"txop":3080821.0,"rxop":3082944.0}}},
+"dkgf":{"n2d-standard-8":{"dkls":[{"c":5,"req":252,"succ":252,"err":0,"rps":8.263,"p50":599.877,"p90":665.231,"p99":724.31,"cpu":34.762,"txop":460054.341,"rxop":460096.377},{"c":10,"req":397,"succ":396,"err":1,"rps":12.964,"p50":762.986,"p90":838.006,"p99":940.908,"cpu":73.527,"txop":461680.293,"rxop":461721.513}],"cggmp":[{"c":5,"req":8,"succ":8,"err":0,"rps":0.128,"p50":28582.771,"p90":36059.922,"p99":36211.301,"cpu":27.796,"txop":2931955.5,"rxop":2932621.75},{"c":10,"req":10,"succ":10,"err":0,"rps":0.18,"p50":51146.138,"p90":51690.773,"p99":55182.892,"cpu":66.411,"txop":2928971.3,"rxop":2929256.3}]},"n2d-standard-16":{"dkls":[{"c":5,"req":233,"succ":233,"err":0,"rps":7.611,"p50":644.223,"p90":724.3,"p99":776.366,"cpu":14.888,"txop":459911.485,"rxop":460008.648},{"c":10,"req":446,"succ":446,"err":0,"rps":14.527,"p50":675.641,"p90":748.813,"p99":832.94,"cpu":29.962,"txop":459423.105,"rxop":459505.103}],"cggmp":[{"c":5,"req":9,"succ":9,"err":0,"rps":0.144,"p50":25727.636,"p90":32312.705,"p99":35511.947,"cpu":14.215,"txop":2923591.222,"rxop":2924789.556},{"c":10,"req":17,"succ":17,"err":0,"rps":0.343,"p50":25749.875,"p90":31320.892,"p99":40105.084,"cpu":35.449,"txop":2919218.412,"rxop":2919837.706}]},"n2d-standard-32":{"dkls":[{"c":5,"req":263,"succ":263,"err":0,"rps":8.651,"p50":566.98,"p90":644.88,"p99":703.526,"cpu":20.719,"txop":553485.989,"rxop":553531.894},{"c":10,"req":502,"succ":502,"err":0,"rps":16.455,"p50":596.254,"p90":689.481,"p99":752.203,"cpu":32.302,"txop":508430.763,"rxop":508485.703}],"cggmp":[{"c":5,"req":10,"succ":10,"err":0,"rps":0.176,"p50":25564.822,"p90":31622.96,"p99":35509.661,"cpu":11.125,"txop":9312023.1,"rxop":9313008.3},{"c":10,"req":16,"succ":16,"err":0,"rps":0.278,"p50":26150.134,"p90":31577.515,"p99":31886.885,"cpu":25.293,"txop":20780587.125,"rxop":20782600.75}]}},"bwCaps":["unlimited","20","10","5","3","2","1"],"bw":{"unlimited":{"dkls":{"c":100,"req":11602,"succ":11602,"err":0,"rps":575.96,"p50":162.193,"p90":244.839,"p99":325.692,"cpu":55.1,"txop":118154.162,"rxop":118336.547},"cggmp":{"c":100,"req":100,"succ":100,"err":0,"rps":5.266,"p50":17209.8,"p90":18694.819,"p99":18840.006,"cpu":66.105,"txop":89517.01,"rxop":89763.7}},"20":{"dkls":{"c":100,"req":820,"succ":819,"err":1,"rps":37.792,"p50":2367.053,"p90":3482.267,"p99":4506.226,"cpu":3.278,"txop":127448.093,"rxop":127458.429},"cggmp":{"c":100,"req":156,"succ":156,"err":0,"rps":5.149,"p50":15585.499,"p90":23188.349,"p99":24043.918,"cpu":63.904,"txop":94873.365,"rxop":94758.103}},"10":{"dkls":{"c":100,"req":436,"succ":434,"err":2,"rps":18.793,"p50":4849.843,"p90":7092.299,"p99":9484.038,"cpu":1.595,"txop":128656.217,"rxop":128724.078},"cggmp":{"c":100,"req":153,"succ":153,"err":0,"rps":5.15,"p50":16703.751,"p90":22051.226,"p99":23210.44,"cpu":63.939,"txop":95069.373,"rxop":95122.556}},"5":{"dkls":{"c":100,"req":240,"succ":239,"err":1,"rps":8.478,"p50":9179.029,"p90":13953.903,"p99":21506.613,"cpu":0.723,"txop":131064.715,"rxop":131247.473},"cggmp":{"c":100,"req":146,"succ":146,"err":0,"rps":5.138,"p50":17024.176,"p90":22754.112,"p99":23654.058,"cpu":63.998,"txop":91914.801,"rxop":91966.966}},"3":{"dkls":{"c":100,"req":163,"succ":162,"err":1,"rps":4.628,"p50":14772.624,"p90":24870.958,"p99":32567.728,"cpu":0.399,"txop":131916.864,"rxop":132168.901},"cggmp":{"c":100,"req":154,"succ":154,"err":0,"rps":4.998,"p50":16759.056,"p90":22968.01,"p99":24098.621,"cpu":60.616,"txop":93469.87,"rxop":93620.87}},"2":{"dkls":{"c":100,"req":119,"succ":119,"err":0,"rps":2.396,"p50":24158.243,"p90":29906.525,"p99":41333.694,"cpu":0.21,"txop":131373.849,"rxop":131599.866},"cggmp":{"c":100,"req":163,"succ":163,"err":0,"rps":4.876,"p50":16396.37,"p90":23123.974,"p99":28048.023,"cpu":57.277,"txop":94793.417,"rxop":94977.994}},"1":{"dkls":{"c":100,"req":100,"succ":100,"err":0,"rps":1.342,"p50":44073.508,"p90":51831.083,"p99":70779.334,"cpu":0.12,"txop":133279.58,"rxop":133573.65},"cggmp":{"c":100,"req":101,"succ":101,"err":0,"rps":2.402,"p50":36940.567,"p90":40873.968,"p99":41379.296,"cpu":18.534,"txop":100859.228,"rxop":101223.446}}},
+"rtts":["0","24","50","100"],"rtt":{"0":{"dkls":{"c":50,"req":10609,"succ":10609,"err":0,"rps":528.123,"p50":92.321,"p90":110.358,"p99":130.008,"cpu":50.199,"txop":117684.128,"rxop":117868.299},"cggmp":{"c":50,"req":143,"succ":143,"err":0,"rps":5.162,"p50":9021.308,"p90":10220.472,"p99":10898.025,"cpu":63.439,"txop":90074.797,"rxop":90225.182}},"24":{"dkls":{"c":50,"req":3545,"succ":3545,"err":0,"rps":174.723,"p50":282.713,"p90":289.19,"p99":303.621,"cpu":15.465,"txop":121903.345,"rxop":122097.158},"cggmp":{"c":50,"req":142,"succ":142,"err":0,"rps":5.234,"p50":9174.124,"p90":10236.281,"p99":10919.127,"cpu":64.479,"txop":92308.965,"rxop":92447.085}},"50":{"dkls":{"c":50,"req":1950,"succ":1950,"err":0,"rps":96.425,"p50":514.529,"p90":519.196,"p99":543.853,"cpu":8.1,"txop":125542.74,"rxop":125752.843},"cggmp":{"c":50,"req":144,"succ":144,"err":0,"rps":5.205,"p50":9136.748,"p90":10033.852,"p99":10586.891,"cpu":64.195,"txop":92385.639,"rxop":92601.986}},"100":{"dkls":{"c":50,"req":1050,"succ":1050,"err":0,"rps":51.424,"p50":962.596,"p90":968.584,"p99":996.823,"cpu":4.098,"txop":120742.388,"rxop":120937.935},"cggmp":{"c":50,"req":135,"succ":135,"err":0,"rps":5.084,"p50":9285.535,"p90":10250.401,"p99":10822.074,"cpu":63.832,"txop":91121.585,"rxop":91403.104}}},"xrDsg":{"dkls":[{"c":1,"req":19,"succ":19,"err":0,"rps":0.898,"p50":1087.286,"p90":1090.465,"p99":1094.11,"cpu":0.088,"txop":128417.684,"rxop":129174.474},{"c":50,"req":950,"succ":950,"err":0,"rps":44.737,"p50":1088.374,"p90":1094.649,"p99":1118.577,"cpu":4.083,"txop":126863.467,"rxop":127036.607},{"c":100,"req":1900,"succ":1900,"err":0,"rps":89.201,"p50":1088.384,"p90":1094.647,"p99":1146.524,"cpu":8.201,"txop":126790.762,"rxop":126970.799},{"c":200,"req":3712,"succ":3712,"err":0,"rps":173.736,"p50":1090.915,"p90":1109.866,"p99":1206.605,"cpu":16.726,"txop":126662.678,"rxop":126838.936}],"cggmp":[{"c":1,"req":9,"succ":9,"err":0,"rps":0.401,"p50":2525.446,"p90":2592.991,"p99":2604.105,"cpu":2.637,"txop":95612.444,"rxop":96694.889},{"c":50,"req":142,"succ":142,"err":0,"rps":4.984,"p50":9237.677,"p90":10117.41,"p99":10464.892,"cpu":61.786,"txop":92361.803,"rxop":92502.908},{"c":100,"req":155,"succ":155,"err":0,"rps":4.805,"p50":17950.557,"p90":21928.804,"p99":23881.057,"cpu":58.618,"txop":92322.606,"rxop":92484.019},{"c":200,"req":200,"succ":200,"err":0,"rps":4.95,"p50":31672.69,"p90":38880.786,"p99":39770.397,"cpu":61.031,"txop":92242.12,"rxop":92407.0}]},"xrDkg":{"dkls":{"c":1,"req":1,"succ":1,"err":0,"rps":0.398,"p50":2005.028,"p90":2005.028,"p99":2005.028,"cpu":0.895,"txop":475940.0,"rxop":475504.0},"cggmp":{"c":1,"req":1,"succ":1,"err":0,"rps":0.043,"p50":22694.085,"p90":22694.085,"p99":22694.085,"cpu":4.288,"txop":3021116.0,"rxop":3018102.0}},"aux":{"cold":{"c":1,"req":1,"succ":1,"err":0,"rps":0.039,"p50":25681.392,"p90":25681.392,"p99":25681.392,"cpu":1.927,"txop":3079476.0,"rxop":3070061.0},"warm1":{"n2d-standard-8":{"c":1,"req":20,"succ":20,"err":0,"rps":8.179,"p50":113.264,"p90":151.832,"p99":154.832,"cpu":0.872,"txop":13195.55,"rxop":12974.85},"n2d-standard-16":{"c":1,"req":20,"succ":20,"err":0,"rps":8.627,"p50":111.279,"p90":116.224,"p99":151.107,"cpu":0.206,"txop":13137.6,"rxop":12905.55},"n2d-standard-32":{"c":1,"req":20,"succ":20,"err":0,"rps":8.805,"p50":112.391,"p90":113.563,"p99":120.401,"cpu":0.206,"txop":12964.6,"rxop":12858.8}},"warmflood":{"n2d-standard-8":[{"c":5,"req":1306,"succ":1306,"err":0,"rps":43.474,"p50":111.855,"p90":115.469,"p99":152.905,"cpu":3.366,"txop":9874.363,"rxop":9971.751},{"c":10,"req":2612,"succ":2612,"err":0,"rps":86.756,"p50":112.055,"p90":115.445,"p99":153.172,"cpu":6.778,"txop":9764.1,"rxop":9864.34}],"n2d-standard-16":[{"c":5,"req":1324,"succ":1324,"err":0,"rps":44.017,"p50":110.633,"p90":112.649,"p99":151.899,"cpu":0.711,"txop":9910.944,"rxop":10000.882},{"c":10,"req":2668,"succ":2668,"err":0,"rps":88.61,"p50":110.463,"p90":112.496,"p99":151.815,"cpu":1.389,"txop":9797.765,"rxop":9901.934}],"n2d-standard-32":[{"c":5,"req":1348,"succ":1348,"err":0,"rps":44.823,"p50":110.646,"p90":112.43,"p99":150.541,"cpu":0.709,"txop":9884.28,"rxop":9976.631},{"c":10,"req":2684,"succ":2684,"err":0,"rps":89.135,"p50":110.816,"p90":113.284,"p99":151.576,"cpu":1.349,"txop":9781.004,"rxop":9884.234}]},"xrcold":{"c":1,"req":1,"succ":1,"err":0,"rps":0.044,"p50":22670.51,"p90":22670.51,"p99":22670.51,"cpu":4.34,"txop":3071707.0,"rxop":3073987.0},"xrwarm":{"c":1,"req":20,"succ":20,"err":0,"rps":1.22,"p50":802.767,"p90":804.467,"p99":906.736,"cpu":0.077,"txop":14805.95,"rxop":14348.9},"warmsign":{"c":1,"req":3,"succ":3,"err":0,"rps":0.49,"p50":2071.138,"p90":2080.286,"p99":2082.344,"cpu":1.597,"txop":93272.333,"rxop":95110.333}},"dklsDkg10s":{"c":1,"req":20,"succ":20,"err":0,"rps":1.932,"p50":518.5,"p90":540.84,"p99":556.772,"cpu":3.731,"txop":451436.3,"rxop":451111.2},"byteRange":{"DSG":{"dkls":{"min":117653,"max":128418,"n":17},"cggmp":{"min":87165,"max":95612,"n":17}},"DKG":{"dkls":{"min":451436,"max":553486,"n":12},"cggmp":{"min":2919218,"max":3080821,"n":10}},"DKG-warm":{"cggmp":{"min":9764,"max":14806,"n":10}}}};
+
+  const CD = "var(--dkls)", CC = "var(--cggmp)";
+  const TIER_SHADES = ["var(--dkls-softer)", "var(--dkls-soft)", "var(--dkls)"];
+  const TIER_SHADES_C = ["var(--cggmp-soft)", "var(--cggmp)", "var(--cggmp-deep)"];
+  const pname = p => (p === "dkls" ? "DKLS23" : "CGGMP21");
+  const ptag = p => (p === "dkls" ? "tag-dkls" : "tag-cggmp");
+  function fmtB(b) { return b >= 1e6 ? fmt(b / 1e6, 2) + " MB" : fmt(b / 1e3, 0) + " KB"; }
+  function panel(host, title, sub) {
+    const w = document.createElement("div");
+    w.innerHTML = `<div class="chart-title">${title}</div><div class="chart-sub">${sub}</div>`;
+    host.appendChild(w);
+    return w;
+  }
+  function tbl(id, head, rows) {
+    const t = document.getElementById(id);
+    t.innerHTML = `<thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead>`;
+    const b = document.createElement("tbody");
+    rows.forEach(r => {
+      const tr = document.createElement("tr");
+      if (r.grp) tr.className = "group-start";
+      tr.innerHTML = r.cells.map(c => `<td>${c}</td>`).join("");
+      b.appendChild(tr);
+    });
+    t.appendChild(b);
+  }
+
+  // ---------- hero KPIs, from the single-request runs ----------
+  const heroEl = document.getElementById("hero-kpis");
+  D.single.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "kpi";
+    div.innerHTML = `<div class="val" style="color:${r.proto === "dkls" ? CD : CC}">`
+      + `${fmt(r.p50, 1)}<span style="font-size:1rem"> ms</span></div>`
+      + `<div class="label">${pname(r.proto)}, one ${r.op} request, n2d-standard-16</div>`;
+    heroEl.appendChild(div);
+  });
+
+  // ---------- 01 single request ----------
+  tbl("single-table",
+    ["Operation", "Protocol", "Success", "Request latency", "Party-VM TX", "Party-VM RX", "Three-VM CPU"],
+    D.single.map((r, i) => ({
+      grp: i % 2 === 0,
+      cells: [i % 2 === 0 ? r.op : "", `<span class="${ptag(r.proto)}">${pname(r.proto)}</span>`,
+        `<span class="pill-good">${r.succ}/${r.req}</span>`, fmt(r.p50, 1) + " ms",
+        fmt(r.tx, 0) + '<span style="color:var(--muted)"> B</span>',
+        fmt(r.rx, 0) + '<span style="color:var(--muted)"> B</span>', fmt(r.cpu, 2) + "%"]
+    })));
+
+  const sc = document.getElementById("single-charts");
+  compareBars(panel(sc, "Request latency, one request", "measured by the driver, log scale"), {
+    height: 260,
+    items: D.single.map(r => ({
+      name: `${r.op}, ${pname(r.proto)}`, value: r.p50,
+      display: r.p50 >= 10000 ? fmt(r.p50 / 1000, 1) + " s" : fmt(r.p50, 1) + " ms",
+      color: r.proto === "dkls" ? CD : CC
+    })),
+    aria: "Single request latency by operation and protocol"
+  });
+  compareBars(panel(sc, "Party-VM TX, one request", "egress NIC deltas, three party VMs summed, log scale"), {
+    height: 260,
+    items: D.single.map(r => ({
+      name: `${r.op}, ${pname(r.proto)}`, value: r.tx, display: fmtB(r.tx),
+      color: r.proto === "dkls" ? CD : CC
+    })),
+    aria: "Party-VM egress bytes for a single request by operation and protocol"
+  });
+
+  // ---------- 02 DSG matrix ----------
+  const p99Host = document.getElementById("p99-charts");
+  D.tiers.forEach(t => {
+    const w = panel(p99Host, `${t.short}, ${t.cores} vCPU`, "DSG p99 latency by concurrency, log scale");
+    groupedBarChart(w, {
+      log: true, height: 240, barMax: 14, barGap: 5,
+      groups: D.conc.map((c, i) => ({
+        label: "c=" + c,
+        values: [D.dsg[t.name].dkls[i].p99, D.dsg[t.name].cggmp[i].p99]
+      })),
+      colors: [CD, CC],
+      yFormat: v => (v >= 1000 ? fmt(v / 1000, 0) + "s" : fmt(v, 0) + "ms"),
+      barLabel: v => (v >= 10000 ? fmt(v / 1000, 0) + "s" : fmt(v, 0)),
+      xAxisLabel: "concurrent users",
+      aria: `DSG p99 latency by concurrency on ${t.name}, DKLS versus CGGMP`
+    });
+  });
+
+  const rpsHost = document.getElementById("rps-charts");
+  [["dkls", TIER_SHADES, [10, 100, 1000], 1], ["cggmp", TIER_SHADES_C, [0.4, 2, 10], 2]].forEach(
+    ([p, shades, ticks, dig]) => {
+      const w = panel(rpsHost, `${pname(p)} throughput`, "DSG/s by concurrency and VM size, log scale");
+      lineChart(w, {
+        xLabels: D.conc.map(c => "c=" + c), log: true, yTickVals: ticks,
+        yFormat: v => fmt(v, v < 1 ? 1 : 0),
+        xAxisLabel: "concurrent users",
+        series: D.tiers.map((t, i) => ({
+          color: shades[i], values: D.dsg[t.name][p].map(r => r.rps),
+          labelFormat: v => fmt(v, dig)
+        })),
+        labelFirst: true,
+        aria: `${pname(p)} DSG throughput by concurrency and VM size`
+      });
+    });
+  document.getElementById("rps-legend").innerHTML = D.tiers.map((t, i) =>
+    `<span><span class="sw" style="background:${TIER_SHADES[i]}"></span>DKLS ${t.short}</span>`
+    + `<span><span class="sw" style="background:${TIER_SHADES_C[i]}"></span>CGGMP ${t.short}</span>`).join("");
+
+  const n32 = {}; D.dsg["n2d-standard-32"].dkls.forEach(r => n32[r.c] = r);
+  document.getElementById("n32-note").innerHTML =
+    `<strong>The n2d-standard-32 DSG cells were re-run for this revision.</strong> The earlier c=100 reading of `
+    + `377.89 RPS at 18.2% CPU is replaced by ${fmt(n32[100].rps, 2)} RPS at ${fmt(n32[100].cpu, 1)}% CPU over `
+    + `${fmt(n32[100].succ, 0)} requests, which sits between the c=50 (${fmt(n32[50].rps, 2)} RPS) and `
+    + `c=200 (${fmt(n32[200].rps, 2)} RPS) points.`;
+
+  const dsgRows = [];
+  ["dkls", "cggmp"].forEach(p => D.tiers.forEach(t =>
+    D.dsg[t.name][p].forEach((r, i) => dsgRows.push({
+      grp: i === 0,
+      cells: [i === 0 ? t.name : "", i === 0 ? `<span class="${ptag(p)}">${pname(p)}</span>` : "",
+        "c=" + r.c, `${fmt(r.succ, 0)}/${fmt(r.req, 0)}`, fmt(r.rps, 2), fmtMs(r.p50),
+        fmtMs(r.p90), fmtMs(r.p99), fmt(r.cpu, 1) + "%"]
+    }))));
+  tbl("dsg-table", ["VM size", "Protocol", "c", "Success", "RPS", "P50", "P90", "P99", "CPU%"], dsgRows);
+
+  // ---------- 03 DKG ----------
+  const dkgHost = document.getElementById("dkg-charts");
+  groupedBarChart(panel(dkgHost, "Single DKG latency", "one request per tier, log scale"), {
+    log: true, height: 250, barMax: 26, barGap: 8,
+    groups: D.tiers.map(t => ({
+      label: t.short, values: [D.dkg1[t.name].dkls.p99, D.dkg1[t.name].cggmp.p99]
+    })),
+    colors: [CD, CC],
+    yFormat: v => (v >= 1000 ? fmt(v / 1000, 0) + "s" : fmt(v, 0) + "ms"),
+    barLabel: v => (v >= 10000 ? fmt(v / 1000, 1) + "s" : fmt(v, 0)),
+    xAxisLabel: "VM size", aria: "Single DKG latency by VM size"
+  });
+  groupedBarChart(panel(dkgHost, "Concurrent DKG flood", "keygens/s over 30s, log scale"), {
+    log: true, height: 250, barMax: 13, barGap: 3,
+    groups: D.tiers.map(t => ({
+      label: t.short,
+      values: [D.dkgf[t.name].dkls[0].rps, D.dkgf[t.name].dkls[1].rps,
+               D.dkgf[t.name].cggmp[0].rps, D.dkgf[t.name].cggmp[1].rps]
+    })),
+    colors: ["var(--dkls-soft)", CD, "var(--cggmp-soft)", CC],
+    yFormat: v => fmt(v, v < 1 ? 1 : 0),
+    barLabel: v => fmt(v, 2),
+    xAxisLabel: "VM size", aria: "Concurrent DKG flood throughput by VM size and concurrency"
+  });
+  document.getElementById("dkg-flood-legend").innerHTML =
+    `<span><span class="sw" style="background:var(--dkls-soft)"></span>DKLS c=5</span>`
+    + `<span><span class="sw" style="background:${CD}"></span>DKLS c=10</span>`
+    + `<span><span class="sw" style="background:var(--cggmp-soft)"></span>CGGMP c=5</span>`
+    + `<span><span class="sw" style="background:${CC}"></span>CGGMP c=10</span>`;
+
+  const dkgRows = [];
+  ["dkls", "cggmp"].forEach(p => D.tiers.forEach(t => {
+    const s = D.dkg1[t.name][p];
+    dkgRows.push({ grp: true, cells: [t.name, `<span class="${ptag(p)}">${pname(p)}</span>`, "1",
+      `${s.succ}/${s.req}`, "—", fmtMs(s.p99), fmt(s.cpu, 1) + "%"] });
+    D.dkgf[t.name][p].forEach(r => dkgRows.push({ cells: ["", "", "c=" + r.c,
+      `${r.succ}/${r.req}`, fmt(r.rps, 2), fmtMs(r.p99), fmt(r.cpu, 1) + "%"] }));
+  }));
+  tbl("dkg-table", ["VM size", "Protocol", "c", "Success", "Keygens/s", "P99", "CPU%"], dkgRows);
+
+  // ---------- 04 aux info reused ----------
+  const auxHost = document.getElementById("aux-charts");
+  const AUX_SHADES = ["var(--dkls-softer)", "var(--dkls-soft)", "var(--dkls)"];
+  groupedBarChart(panel(auxHost, "Latency, aux per keygen vs. reused", "P50 per keygen, n2d-standard-16, log scale"), {
+    log: true, height: 250, barMax: 30, barGap: 10,
+    groups: [
+      { label: "same region", values: [D.aux.warm1["n2d-standard-16"].p50, D.aux.cold.p50] },
+      { label: "cross-region", values: [D.aux.xrwarm.p50, D.aux.xrcold.p50] }
+    ],
+    colors: [CD, CC],
+    yFormat: v => (v >= 1000 ? fmt(v / 1000, 0) + "s" : fmt(v, 0) + "ms"),
+    barLabel: v => (v >= 10000 ? fmt(v / 1000, 1) + "s" : fmt(v, 0)),
+    xAxisLabel: "scenario", aria: "CGGMP DKG latency, aux per keygen versus aux reused"
+  });
+  groupedBarChart(panel(auxHost, "Throughput with aux reused", "keygens/s, log scale"), {
+    log: true, height: 250, barMax: 20, barGap: 6,
+    groups: D.tiers.map(t => ({
+      label: t.short,
+      values: [D.aux.warm1[t.name].rps, D.aux.warmflood[t.name][0].rps, D.aux.warmflood[t.name][1].rps]
+    })),
+    colors: AUX_SHADES,
+    yFormat: v => fmt(v, 0),
+    barLabel: v => fmt(v, 2),
+    xAxisLabel: "VM size", aria: "CGGMP DKG throughput with reused aux by VM size and concurrency"
+  });
+  document.getElementById("aux-rps-legend").innerHTML =
+    ["c=1", "c=5", "c=10"].map((l, i) =>
+      `<span><span class="sw" style="background:${AUX_SHADES[i]}"></span>aux reused, ${l}</span>`).join("");
+
+  const auxRows = [];
+  const auxRow = (scen, warm, vm, r, grp) => auxRows.push({
+    grp: !!grp,
+    cells: [scen, `<span class="${warm ? "tag-dkls" : "tag-cggmp"}">${warm ? "reused" : "per keygen"}</span>`,
+      vm, "c=" + r.c, `${r.succ}/${r.req}`, fmt(r.rps, 2), fmtMs(r.p50), fmtMs(r.p99),
+      fmt(r.cpu, 2) + "%"]
+  });
+  auxRow("same region", false, "n2d-standard-16", D.aux.cold, true);
+  D.tiers.forEach((t, i) => auxRow("same region", true, t.name, D.aux.warm1[t.name], i === 0));
+  D.tiers.forEach((t, i) => D.aux.warmflood[t.name].forEach((r, j) =>
+    auxRow("same region, flood", true, t.name, r, i === 0 && j === 0)));
+  auxRow("cross-region", false, "n2d-standard-16", D.aux.xrcold, true);
+  auxRow("cross-region", true, "n2d-standard-16", D.aux.xrwarm);
+  tbl("aux-table", ["Scenario", "Aux", "VM size", "c", "Success", "Keygens/s", "P50", "P99", "CPU%"], auxRows);
+
+  const dk16 = D.dkg1["n2d-standard-16"], df16 = D.dkgf["n2d-standard-16"];
+  document.getElementById("aux-callout").innerHTML =
+    `<strong>Keys made with reused aux were checked by signing with them:</strong> `
+    + `<span class="mono">results/aux-warm-sign.csv</span> — ${D.aux.warmsign.succ}/${D.aux.warmsign.req} successful, `
+    + `P50 ${fmtMs(D.aux.warmsign.p50)}, ${fmt(D.aux.warmsign.txop, 0)} B per signature, in line with the CGGMP `
+    + `DSG rows elsewhere on this page.<br><br><strong>DKLS reference for the same operation</strong> (section 03): `
+    + `a single keygen measures ${fmtMs(dk16.dkls.p99)} at ${fmt(dk16.dkls.txop, 0)} B, and the c=10 flood reaches `
+    + `${fmt(df16.dkls[1].rps, 2)} keygens/s. Warm CGGMP and DKLS figures are both per keygen. The one-time aux `
+    + `generation that the warm rows skip is the cold row in the same table (${fmtMs(D.aux.cold.p50)}), paid `
+    + `once per party instead of per key.<br><br><strong>On bytes:</strong> the interface counters give roughly `
+    + `10–13 KB per keygen with reused aux, against about 2.95 MB from scratch. Those are run-window totals `
+    + `divided by the keygen count, so the reliable per-request byte figures are still the single-request `
+    + `measurements in section 01; no single-request warm run exists yet.`;
+
+  // ---------- 05 bandwidth ----------
+  const capLabel = k => (k === "unlimited" ? "∞" : k);
+  const bwHost = document.getElementById("bw-charts");
+  lineChart(panel(bwHost, "Throughput vs. egress cap", "DSG/s, log scale, c=100, n2d-standard-16"), {
+    xLabels: D.bwCaps.map(capLabel), log: true, yTickVals: [2, 10, 50, 600],
+    yFormat: v => fmt(v, 0), xAxisLabel: "egress cap per party VM (Mbit/s)",
+    series: [
+      { color: CD, values: D.bwCaps.map(k => D.bw[k].dkls.rps), labelFormat: v => fmt(v, 1) },
+      { color: CC, values: D.bwCaps.map(k => D.bw[k].cggmp.rps), labelFormat: v => fmt(v, 2) }
+    ],
+    labelFirst: true, aria: "DSG throughput by egress cap"
+  });
+  lineChart(panel(bwHost, "CPU vs. egress cap", "average CPU % across the three party VMs"), {
+    xLabels: D.bwCaps.map(capLabel), log: false, yTickVals: [0, 25, 50, 75, 100],
+    yFormat: v => v + "%", xAxisLabel: "egress cap per party VM (Mbit/s)",
+    series: [
+      { color: CD, values: D.bwCaps.map(k => D.bw[k].dkls.cpu), labelFormat: v => fmt(v, 1) + "%" },
+      { color: CC, values: D.bwCaps.map(k => D.bw[k].cggmp.cpu), labelFormat: v => fmt(v, 1) + "%" }
+    ],
+    labelFirst: true, aria: "Party-VM CPU by egress cap"
+  });
+
+  const bwRows = [];
+  D.bwCaps.forEach(k => ["dkls", "cggmp"].forEach(p => {
+    const r = D.bw[k][p];
+    bwRows.push({ grp: p === "dkls",
+      cells: [p === "dkls" ? (k === "unlimited" ? "unlimited" : k + " Mbit/s") : "",
+        `<span class="${ptag(p)}">${pname(p)}</span>`, `${fmt(r.succ, 0)}/${fmt(r.req, 0)}`,
+        fmt(r.rps, 2), fmtMs(r.p50), fmtMs(r.p99), fmt(r.cpu, 1) + "%"] });
+  }));
+  tbl("bw-table", ["Egress cap", "Protocol", "Success", "RPS", "P50", "P99", "CPU%"], bwRows);
+
+  const cggmpCpuNoOne = D.bwCaps.filter(k => k !== "1").map(k => D.bw[k].cggmp.cpu);
+  document.getElementById("bw-callout").innerHTML =
+    `<strong>Ordering changes at and below the 3 Mbit/s cap.</strong> DKLS measures the higher throughput at every `
+    + `cap down to 5 Mbit/s. From 3 Mbit/s down CGGMP measures higher: ${fmt(D.bw["3"].dkls.rps, 2)} vs `
+    + `${fmt(D.bw["3"].cggmp.rps, 2)} DSG/s at 3 Mbit/s, ${fmt(D.bw["2"].dkls.rps, 2)} vs `
+    + `${fmt(D.bw["2"].cggmp.rps, 2)} at 2 Mbit/s, and ${fmt(D.bw["1"].dkls.rps, 2)} vs `
+    + `${fmt(D.bw["1"].cggmp.rps, 2)} at 1 Mbit/s. Across the sweep DKLS CPU falls from `
+    + `${fmt(D.bw.unlimited.dkls.cpu, 1)}% to ${fmt(D.bw["1"].dkls.cpu, 1)}% while CGGMP CPU holds between `
+    + `${fmt(Math.min(...cggmpCpuNoOne), 0)}% and ${fmt(Math.max(...cggmpCpuNoOne), 0)}% down to 2 Mbit/s, then `
+    + `drops to ${fmt(D.bw["1"].cggmp.cpu, 1)}% at 1 Mbit/s.`;
+
+  // ---------- 06 RTT ----------
+  const rttLabel = k => (k === "0" ? "~0" : "~" + k + " ms");
+  const rttHost = document.getElementById("rtt-charts");
+  lineChart(panel(rttHost, "Throughput vs. RTT", "DSG/s, log scale, c=50, n2d-standard-16"), {
+    xLabels: D.rtts.map(rttLabel), log: true, yTickVals: [5, 20, 100, 600],
+    yFormat: v => fmt(v, 0), xAxisLabel: "inter-node RTT",
+    series: [
+      { color: CD, values: D.rtts.map(k => D.rtt[k].dkls.rps), labelFormat: v => fmt(v, 1) },
+      { color: CC, values: D.rtts.map(k => D.rtt[k].cggmp.rps), labelFormat: v => fmt(v, 2) }
+    ],
+    labelFirst: true, aria: "DSG throughput by inter-node RTT"
+  });
+  lineChart(panel(rttHost, "CPU vs. RTT", "average CPU % across the three party VMs"), {
+    xLabels: D.rtts.map(rttLabel), log: false, yTickVals: [0, 25, 50, 75],
+    yFormat: v => v + "%", xAxisLabel: "inter-node RTT",
+    series: [
+      { color: CD, values: D.rtts.map(k => D.rtt[k].dkls.cpu), labelFormat: v => fmt(v, 1) + "%" },
+      { color: CC, values: D.rtts.map(k => D.rtt[k].cggmp.cpu), labelFormat: v => fmt(v, 1) + "%" }
+    ],
+    labelFirst: true, aria: "Party-VM CPU by inter-node RTT"
+  });
+
+  const rttRows = [];
+  D.rtts.forEach(k => ["dkls", "cggmp"].forEach(p => {
+    const r = D.rtt[k][p];
+    rttRows.push({ grp: p === "dkls",
+      cells: [p === "dkls" ? (k === "0" ? "~0 (real same-zone)" : "~" + k + " ms") : "",
+        `<span class="${ptag(p)}">${pname(p)}</span>`, `${fmt(r.succ, 0)}/${fmt(r.req, 0)}`,
+        fmt(r.rps, 2), fmtMs(r.p50), fmtMs(r.p99), fmt(r.cpu, 1) + "%"] });
+  }));
+  tbl("rtt-table", ["RTT", "Protocol", "Success", "RPS", "P50", "P99", "CPU%"], rttRows);
+
+  // ---------- 06 cross-region ----------
+  const xrHost = document.getElementById("xr-charts");
+  lineChart(panel(xrHost, "Cross-region DSG throughput", "DSG/s, log scale, 3 regions, n2d-standard-16"), {
+    xLabels: D.conc.map(c => "c=" + c), log: true, yTickVals: [0.4, 2, 10, 50, 200],
+    yFormat: v => fmt(v, v < 1 ? 1 : 0), xAxisLabel: "concurrent users",
+    series: [
+      { color: CD, values: D.xrDsg.dkls.map(r => r.rps), labelFormat: v => fmt(v, 2) },
+      { color: CC, values: D.xrDsg.cggmp.map(r => r.rps), labelFormat: v => fmt(v, 2) }
+    ],
+    labelFirst: true, aria: "Cross-region DSG throughput by concurrency"
+  });
+  lineChart(panel(xrHost, "Cross-region DSG tail latency", "P99, log scale, 3 regions, n2d-standard-16"), {
+    xLabels: D.conc.map(c => "c=" + c), log: true, yTickVals: [1000, 5000, 20000, 50000],
+    yFormat: v => fmtMs(v), xAxisLabel: "concurrent users",
+    series: [
+      { color: CD, values: D.xrDsg.dkls.map(r => r.p99), labelFormat: v => fmtMs(v) },
+      { color: CC, values: D.xrDsg.cggmp.map(r => r.p99), labelFormat: v => fmtMs(v) }
+    ],
+    labelFirst: true, aria: "Cross-region DSG P99 latency by concurrency"
+  });
+
+  const xrRows = [];
+  ["dkls", "cggmp"].forEach(p => {
+    const k = D.xrDkg[p];
+    xrRows.push({ grp: true, cells: ["DKG", `<span class="${ptag(p)}">${pname(p)}</span>`, "1",
+      `${k.succ}/${k.req}`, "—", fmtMs(k.p99), fmt(k.cpu, 1) + "%"] });
+  });
+  ["dkls", "cggmp"].forEach(p => D.xrDsg[p].forEach((r, i) => xrRows.push({
+    grp: i === 0,
+    cells: [i === 0 ? "DSG" : "", i === 0 ? `<span class="${ptag(p)}">${pname(p)}</span>` : "",
+      "c=" + r.c, `${fmt(r.succ, 0)}/${fmt(r.req, 0)}`, fmt(r.rps, 2), fmtMs(r.p99),
+      fmt(r.cpu, 1) + "%"]
+  })));
+  tbl("xr-table", ["Operation", "Protocol", "c", "Success", "RPS", "P99", "CPU%"], xrRows);
+
+  const xd = D.xrDsg.dkls, xc = D.xrDsg.cggmp;
+  const sr = D.dsg["n2d-standard-16"];
+  document.getElementById("xr-nodes").innerHTML =
+    `<strong>Which nodes talk to which.</strong> The run records its three zones in party order: `
+    + `<span class="mono">europe-west3-a</span> (VM0), <span class="mono">europe-north1-a</span> (VM1), `
+    + `<span class="mono">us-east1-b</span> (VM2). A 2-of-3 signature needs only two parties, so DSG does not `
+    + `use all three:<br><br>`
+    + `<strong>CGGMP</strong> signs with parties 0 and 1 — europe-west3-a and europe-north1-a. The VM in `
+    + `us-east1-b holds a share but takes no part in signing, so the signing traffic stays inside Europe: `
+    + `P50 moves from ${fmtMs(sr.cggmp[1].p50)} same-region to ${fmtMs(xc[1].p50)} cross-region at c=50.<br><br>`
+    + `<strong>DKLS</strong> signs through its client-party adapter on VM2 in us-east1-b, which calls the first `
+    + `trio service on VM0 in europe-west3-a, which talks to the second on VM1 in europe-north1-a, so DKLS `
+    + `signing crosses the Atlantic: P50 moves from ${fmtMs(sr.dkls[1].p50)} same-region to `
+    + `${fmtMs(xd[1].p50)} cross-region at c=50.<br><br>`
+    + `Key generation uses all three parties in both protocols, so a DKG spans all three regions.<br><br>`
+    + `The zones are labels passed to the runner, not detected by it, so a different order would swap these legs.`;
+
+  const n16 = D.dkg1["n2d-standard-16"];
+  document.getElementById("xr-callout").innerHTML =
+    `<strong>Same-region reference, same tier:</strong> a single DKG measures ${fmtMs(D.xrDkg.dkls.p99)} `
+    + `(DKLS) and ${fmtMs(D.xrDkg.cggmp.p99)} (CGGMP) across the three regions, against `
+    + `${fmtMs(n16.dkls.p99)} and ${fmtMs(n16.cggmp.p99)} in one zone (section 03). DSG P99 for DKLS sits `
+    + `between ${fmtMs(Math.min(...D.xrDsg.dkls.map(r => r.p99)))} and `
+    + `${fmtMs(Math.max(...D.xrDsg.dkls.map(r => r.p99)))} across c=1–200 here.`;
+
+})();
+</script>
+</body>
+</html>
