@@ -325,11 +325,6 @@
   :root[data-theme="dark"] .brandbar { background: rgba(20, 26, 17, 0.88); }
   :root[data-theme="dark"] .brandbar img { filter: brightness(0) invert(1); }
   nav.toc { top: 56px; height: calc(100vh - 56px); }
-  .footer-logo { height: 18px; width: auto; display: block; margin-bottom: 14px; opacity: 0.9; }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .footer-logo { filter: brightness(0) invert(1); }
-  }
-  :root[data-theme="dark"] .footer-logo { filter: brightness(0) invert(1); }
 
   @media print {
     .brandbar { display: none; }
@@ -568,10 +563,6 @@
       </div>
     </section>
 
-    <footer>
-      <img class="footer-logo" src="silence-labs-logo.png" alt="Silence Laboratories">
-      Measured on Google Cloud on plain Ubuntu 24.04 VMs, not inside Confidential Space. DKLS23 runs from a pinned trio image; CGGMP21 is LFDT-Lockness/cggmp21 at b870883. Each point is a fixed-duration run with a set number of requests in flight. All figures are generated from the CSV files in the benchmark repo.
-    </footer>
   </main>
 </div>
 
