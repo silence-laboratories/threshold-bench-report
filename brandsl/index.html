@@ -4,9 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="decibel/fonts.css">
+<link rel="stylesheet" href="decibel/tokens.css">
 <title>DKLS23 vs CGGMP21 — 2-of-3 benchmark · Silence Laboratories</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  
 
   :root {
     color-scheme: light;
@@ -232,203 +234,11 @@
     main { padding-top: 20px; }
   }
 </style>
-
-<style id="brandsl-theme">
-  /* Silence Laboratories design system — navy #0F2446, Archivo, hairline cards, pill actions. */
-  :root {
-    color-scheme: light;
-    --page:        #ffffff;
-    --surface:     #ffffff;
-    --surface-2:   #f5f7fa;
-    --ink:         #0f2446;
-    --ink-2:       #57667d;
-    --muted:       #8792a2;
-    --grid:        #e7e9ec;
-    --baseline:    #d0d4db;
-    --border:      #e7e9ec;
-    --dkls:        #0f2446;
-    --dkls-soft:   #1e4176;
-    --dkls-softer: #dbe3f2;
-    --dkls-deep:   #050b14;
-    --cggmp:       #38a8f8;
-    --cggmp-soft:  #7cc0f7;
-    --cggmp-deep:  #0f6fbd;
-    --good:        #1f7a4d;
-
-    --sl-font-display: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --sl-font-body: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --sl-font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
-    --sl-navy-900: #0a1a31;
-    --sl-navy-800: #0f2446;
-    --sl-navy-700: #16325c;
-    --sl-navy-600: #1e4176;
-    --sl-gray-050: #f5f7fa;
-    --sl-gray-100: #e7e9ec;
-    --sl-gray-200: #d0d4db;
-    --sl-gray-300: #caced6;
-    --sl-gray-400: #959ead;
-    --sl-gray-500: #8792a2;
-    --sl-gray-700: #57667d;
-    --sl-sky: #38a8f8;
-    --sl-on-navy-08: rgba(255, 255, 255, 0.08);
-    --sl-on-navy-12: rgba(255, 255, 255, 0.12);
-    --sl-on-navy-64: rgba(255, 255, 255, 0.64);
-    --sl-radius-sm: 8px;
-    --sl-radius-md: 12px;
-    --sl-radius-lg: 16px;
-    --sl-radius-xl: 24px;
-    --sl-radius-pill: 999px;
-    --sl-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-    --sl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --sl-duration-base: 240ms;
-  }
-  /* This variant keeps the design system's light page. */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: light;
-      --page: #ffffff; --surface: #ffffff; --surface-2: #f5f7fa;
-      --ink: #0f2446; --ink-2: #57667d; --muted: #8792a2;
-      --grid: #e7e9ec; --baseline: #d0d4db; --border: #e7e9ec;
-      --dkls: #0f2446; --dkls-soft: #1e4176; --dkls-softer: #dbe3f2; --dkls-deep: #050b14;
-      --cggmp: #38a8f8; --cggmp-soft: #7cc0f7; --cggmp-deep: #0f6fbd; --good: #1f7a4d;
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: light;
-    --page: #ffffff; --surface: #ffffff; --surface-2: #f5f7fa;
-    --ink: #0f2446; --ink-2: #57667d; --muted: #8792a2;
-    --grid: #e7e9ec; --baseline: #d0d4db; --border: #e7e9ec;
-    --dkls: #0f2446; --dkls-soft: #1e4176; --dkls-softer: #dbe3f2; --dkls-deep: #050b14;
-    --cggmp: #38a8f8; --cggmp-soft: #7cc0f7; --cggmp-deep: #0f6fbd; --good: #1f7a4d;
-  }
-
-  body { font-family: var(--sl-font-body); font-size: 16px; line-height: 1.6; background: var(--page); color: var(--ink-2); }
-  h1, h2, h3, .chart-title { font-family: var(--sl-font-display); }
-  h1 { font-size: clamp(2.5rem, 1.6rem + 3.2vw, 4.25rem); line-height: 1.05; letter-spacing: -0.02em; font-weight: 600; }
-  h2 { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2rem); line-height: 1.18; letter-spacing: -0.01em; font-weight: 600; color: var(--ink); }
-  h3 { font-weight: 600; }
-  p { color: var(--ink-2); }
-  a { color: var(--sl-navy-700); }
-  .mono, code, kbd, pre { font-family: var(--sl-font-mono); }
-
-  /* ---------- nav bar ---------- */
-  .brandbar {
-    position: sticky; top: 0; z-index: 60;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 72px; padding: 0 clamp(20px, 4vw, 32px);
-    background: var(--sl-navy-800);
-    border-bottom: 1px solid var(--sl-on-navy-12);
-  }
-  .brandbar img { height: 28px; width: auto; display: block; }
-  .brandbar-cta {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #fff; color: var(--sl-navy-800);
-    font-size: 14px; font-weight: 500; line-height: 1; text-decoration: none;
-    padding: 13px 20px; border-radius: var(--sl-radius-pill);
-    transition: background 120ms var(--sl-ease-standard);
-  }
-  .brandbar-cta:hover { background: var(--sl-gray-100); }
-
-  /* ---------- side toc ---------- */
-  nav.toc { top: 72px; height: calc(100vh - 72px); width: 210px; padding: 44px 20px 44px 0; border-right: 1px solid var(--sl-gray-100); }
-  nav.toc .brand { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sl-gray-500); }
-  nav.toc a { font-family: var(--sl-font-body); font-size: 14px; color: var(--sl-gray-700); border-radius: var(--sl-radius-sm); padding: 6px 10px; border-left: none; transition: color 120ms var(--sl-ease-standard), background 120ms var(--sl-ease-standard); }
-  nav.toc a:hover { color: var(--ink); background: var(--sl-gray-050); }
-  nav.toc .toc-group { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; color: var(--sl-gray-400); }
-
-  main { padding: 40px clamp(20px, 4vw, 32px) 96px; }
-
-  /* ---------- hero band ---------- */
-  header.hero {
-    background: var(--sl-navy-800); border: 1px solid var(--sl-on-navy-12);
-    border-radius: var(--sl-radius-xl);
-    padding: 48px clamp(24px, 4vw, 56px) 44px; margin: 0 0 8px;
-  }
-  header.hero .eyebrow {
-    margin: 0 0 18px; font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--sl-on-navy-64);
-  }
-  header.hero h1 { color: #fff; }
-  header.hero p { color: var(--sl-on-navy-64); }
-  header.hero p strong { color: #fff; }
-  header.hero a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
-  header.hero .kpi-row { margin-top: 32px; }
-  header.hero .kpi { background: var(--sl-navy-700); border: 1px solid var(--sl-on-navy-12); border-radius: var(--sl-radius-lg); }
-  header.hero .kpi .val { color: #fff !important; }
-  header.hero .kpi .label { color: var(--sl-on-navy-64); }
-
-  .kpi-row { gap: 16px; }
-  .kpi { background: var(--surface); border: 1px solid var(--sl-gray-100); border-radius: var(--sl-radius-xl); padding: 20px 22px; transition: transform var(--sl-duration-base) var(--sl-ease-out), border-color var(--sl-duration-base) var(--sl-ease-standard); }
-  .kpi:hover { transform: translateY(-2px); border-color: var(--sl-gray-300); }
-  .kpi .val { font-family: var(--sl-font-display); font-size: 2.5rem; font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
-  .kpi .label { font-size: 14px; line-height: 1.5; color: var(--ink-2); }
-
-  /* ---------- sections ---------- */
-  section { margin: 96px 0; }
-  .section-num { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sl-gray-500); }
-  .section-head { gap: 12px; margin-bottom: 10px; }
-  .group-divider { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; color: var(--sl-gray-500); margin-top: 96px; }
-  .group-divider::after { background: var(--sl-gray-100); }
-
-  /* ---------- cards ---------- */
-  .panel { border: 1px solid var(--sl-gray-100); border-radius: var(--sl-radius-xl); padding: 24px clamp(16px, 2vw, 28px) 20px; transition: transform var(--sl-duration-base) var(--sl-ease-out), border-color var(--sl-duration-base) var(--sl-ease-standard); }
-  .panel:hover { transform: translateY(-2px); border-color: var(--sl-gray-300); }
-  .chart-title { font-size: 16px; font-weight: 600; color: var(--ink); }
-  .chart-sub { font-size: 13px; color: var(--sl-gray-500); }
-  .legend { font-size: 14px; color: var(--ink-2); }
-  .legend .sw { border-radius: var(--sl-radius-pill); }
-  svg text { font-family: var(--sl-font-body); fill: var(--sl-gray-700); }
-  svg .axis-label { fill: var(--sl-gray-500); }
-  svg .grid-line { stroke: var(--sl-gray-100); }
-  svg .baseline { stroke: var(--sl-gray-200); }
-
-  /* ---------- tables ---------- */
-  .table-wrap { border: 1px solid var(--sl-gray-100); border-radius: var(--sl-radius-lg); }
-  thead th { background: var(--sl-navy-800); color: #fff; font-family: var(--sl-font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; border-bottom: none; }
-  tbody td { border-bottom: 1px solid var(--sl-gray-100); }
-  tbody td:first-child, tbody td:nth-child(2) { color: var(--ink-2); }
-  tbody tr:hover td { background: var(--sl-gray-050); }
-  tbody tr.group-start td { border-top: 1px solid var(--sl-gray-100); }
-  .tag-dkls { color: var(--sl-navy-800); }
-  .tag-cggmp { color: var(--cggmp-deep); }
-  .pill-good { color: var(--good); }
-
-  /* ---------- callouts / method ---------- */
-  .callout { background: var(--sl-gray-050); border: 1px solid var(--sl-gray-100); border-radius: var(--sl-radius-lg); font-size: 15px; color: var(--ink-2); }
-  .callout strong { color: var(--ink); }
-  .callout.warn { background: var(--sl-navy-800); border-color: transparent; color: var(--sl-on-navy-64); }
-  .callout.warn strong { color: #fff; }
-  dl.method dt { font-family: var(--sl-font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; color: var(--sl-gray-500); }
-  dl.method dd { color: var(--ink-2); font-size: 15px; }
-
-  /* ---------- closing cta ---------- */
-  .sl-cta { background: var(--sl-navy-800); border-radius: var(--sl-radius-xl); padding: 64px clamp(24px, 4vw, 56px); margin: 96px 0 0; }
-  .sl-eyebrow { margin: 0 0 16px; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sl-on-navy-64); }
-  .sl-cta h2 { color: #fff; font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem); max-width: 24ch; margin: 0 0 32px; }
-  .sl-cta-btn { display: inline-flex; align-items: center; background: #fff; color: var(--sl-navy-800); font-size: 16px; font-weight: 500; line-height: 1; text-decoration: none; padding: 16px 28px; border-radius: var(--sl-radius-pill); transition: background 120ms var(--sl-ease-standard); }
-  .sl-cta-btn:hover { background: var(--sl-gray-100); }
-  .sl-copyright { margin: 32px 0 0; text-align: center; font-size: 14px; color: var(--sl-gray-500); }
-
-  @media print {
-    .brandbar, .sl-cta { display: none; }
-    header.hero { background: none; border: none; padding: 0; }
-    header.hero .eyebrow { color: var(--sl-gray-500); }
-    header.hero h1 { color: var(--ink); }
-    header.hero p, header.hero p strong { color: var(--ink-2); }
-    header.hero .kpi { background: none; border-color: var(--sl-gray-200); }
-    header.hero .kpi .val { color: var(--ink) !important; }
-    header.hero .kpi .label { color: var(--ink-2); }
-    thead th { background: none; color: var(--ink); border-bottom: 1px solid var(--sl-gray-200); }
-  }
-  @media (max-width: 860px) {
-    .brandbar { position: static; }
-    nav.toc { top: 0; height: auto; border-right: none; }
-  }
-</style>
+<link rel="stylesheet" href="decibel-theme.css">
 </head>
 <body>
 <header class="brandbar">
-  <a href="https://silencelaboratories.com/" target="_blank" rel="noopener" aria-label="Silence Laboratories"><img src="silence-logo-night.png" alt="Silence Laboratories"></a>
+  <a href="https://silencelaboratories.com/" target="_blank" rel="noopener" aria-label="Silence Laboratories"><img src="silence-logo-day.png" alt="Silence Laboratories"></a>
   <a class="brandbar-cta" href="https://silencelaboratories.com/" target="_blank" rel="noopener">Learn more <span aria-hidden="true">→</span></a>
 </header>
 <div class="shell">

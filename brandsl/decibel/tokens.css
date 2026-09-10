@@ -1,0 +1,154 @@
+/* Decibel (dB) — distilled token reference.
+ *
+ * Source: silence-laboratories/decibel (private), tokens/theme/Silence.tokens.json
+ * (Figma export) + tokens/custom/{Mobile,Desktop}.tokens.json. The package itself
+ * generates these as --db-* variables; the values below are the same, distilled
+ * for static HTML use. Never edit decibel's generated tokens in the repo — these
+ * are a read-only copy for artifacts.
+ *
+ * Dark mode in decibel is the `.dark` class on a parent element (typically <html>).
+ */
+
+:root {
+  /* semantic — light */
+  --db-background: #FFFFFF;
+  --db-foreground: #162235;
+  --db-card: #FFFFFF;
+  --db-card-foreground: #162235;
+  --db-popover: #FFFFFF;
+  --db-popover-foreground: #162235;
+  --db-primary: #184691;
+  --db-primary-foreground: #FFFFFF;
+  --db-secondary: #EBF0F9;
+  --db-secondary-foreground: #0D2141;
+  --db-muted: #F4F5F7;
+  --db-muted-foreground: #606A79;
+  --db-accent: #F2F3F6;
+  --db-accent-foreground: #162235;
+  --db-destructive: #E7000B;
+  --db-destructive-foreground: #FFFFFF;
+  --db-border: #E3E6EB;
+  --db-input: #E3E6EB;
+  --db-ring: #184691;
+
+  /* charts — sequential blue ramp, light */
+  --db-chart-1: #001760;
+  --db-chart-2: #05357E;
+  --db-chart-3: #4070BF;
+  --db-chart-4: #7BAEFF;
+  --db-chart-5: #9BCFFF;
+
+  /* sidebar — light */
+  --db-sidebar: #F9FAFC;
+  --db-sidebar-foreground: #162235;
+  --db-sidebar-primary: #184691;
+  --db-sidebar-primary-foreground: #FFFFFF;
+  --db-sidebar-accent: #F2F3F6;
+  --db-sidebar-accent-foreground: #162235;
+  --db-sidebar-border: #E3E6EB;
+  --db-sidebar-ring: #184691;
+
+  /* radius — decibel is squared: sm/md/lg are 0 */
+  --db-radius-none: 0px;
+  --db-radius-xs: 2px;
+  --db-radius-sm: 0px;
+  --db-radius-md: 0px;
+  --db-radius-lg: 0px;
+  --db-radius-xl: 4px;
+  --db-radius-2xl: 16px;
+  --db-radius-3xl: 24px;
+  --db-radius-4xl: 32px;
+  --db-radius-full: 9999px;
+
+  /* type */
+  --db-font-sans: "Stack Sans Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --db-font-heading: "Stack Sans Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --db-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* spacing — mobile-first, desktop at md (768px) */
+  --db-container-padding-x: 16px;
+  --db-section-padding-y: 64px;
+  --db-section-title-gap-sm: 16px;
+  --db-section-title-gap-md: 16px;
+  --db-section-title-gap-lg: 16px;
+  --db-section-title-gap-xl: 20px;
+
+  /* headings — mobile values (font-size / line-height / letter-spacing) */
+  --db-text-heading-sm: 20px;
+  --db-leading-heading-sm: 28px;
+  --db-tracking-heading-sm: -0.5px;
+  --db-weight-heading-sm: 600;
+  --db-text-heading-md: 30px;
+  --db-leading-heading-md: 36px;
+  --db-tracking-heading-md: -0.75px;
+  --db-weight-heading-md: 600;
+  --db-text-heading-lg: 36px;
+  --db-leading-heading-lg: 40px;
+  --db-tracking-heading-lg: -0.9px;
+  --db-weight-heading-lg: 600;
+  --db-text-heading-xl: 48px;
+  --db-leading-heading-xl: 48px;
+  --db-tracking-heading-xl: -1.2px;
+  --db-weight-heading-xl: 600;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --db-container-padding-x: 24px;
+    --db-section-padding-y: 96px;
+    --db-section-title-gap-md: 20px;
+    --db-section-title-gap-lg: 20px;
+    --db-section-title-gap-xl: 24px;
+
+    --db-text-heading-sm: 24px;
+    --db-leading-heading-sm: 32px;
+    --db-tracking-heading-sm: -0.6px;
+    --db-text-heading-md: 36px;
+    --db-leading-heading-md: 40px;
+    --db-tracking-heading-md: -0.9px;
+    --db-text-heading-lg: 48px;
+    --db-leading-heading-lg: 48px;
+    --db-tracking-heading-lg: -1.2px;
+    --db-text-heading-xl: 60px;
+    --db-leading-heading-xl: 60px;
+    --db-tracking-heading-xl: -1.5px;
+  }
+}
+
+/* semantic — dark */
+.dark {
+  --db-background: #080B11;
+  --db-foreground: #F8F8F8;
+  --db-card: #0C1015;
+  --db-card-foreground: #F8F8F8;
+  --db-popover: #0E1217;
+  --db-popover-foreground: #F8F8F8;
+  --db-primary: #184691;
+  --db-primary-foreground: #FFFFFF;
+  --db-secondary: #2F5EAB;
+  --db-secondary-foreground: #A9DFFF;
+  --db-muted: #1F2226;
+  --db-muted-foreground: #A7AEBB;
+  --db-accent: #3E4349;
+  --db-accent-foreground: #F8F8F8;
+  --db-destructive: #FF5B5B;
+  --db-destructive-foreground: #000000;
+  --db-border: #292B30;
+  --db-input: #292B30;
+  --db-ring: #2F5EAB;
+
+  --db-chart-1: #05357E;
+  --db-chart-2: #4070BF;
+  --db-chart-3: #7BAEFF;
+  --db-chart-4: #A9DFFF;
+  --db-chart-5: #D0FEFF;
+
+  --db-sidebar: #030407;
+  --db-sidebar-foreground: #F8F8F8;
+  --db-sidebar-primary: #FFFFFF;
+  --db-sidebar-primary-foreground: #14161A;
+  --db-sidebar-accent: #1D1F24;
+  --db-sidebar-accent-foreground: #F8F8F8;
+  --db-sidebar-border: #292B30;
+  --db-sidebar-ring: #2F5EAB;
+}

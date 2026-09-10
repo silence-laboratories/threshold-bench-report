@@ -1,0 +1,203 @@
+/* Decibel (dB) profile — drop-in theme for report/document pages.
+ *
+ * Load order in <head>:
+ *   1. the document's own styles
+ *   2. ../decibel/fonts.css   (self-hosted Stack Sans Text + Geist Mono)
+ *   3. ../decibel/tokens.css  (optional — every var below has a literal fallback)
+ *   4. this file              (must come last to win the cascade)
+ *
+ * Dark mode follows decibel: `.dark` on <html>, or the document's own
+ * `[data-theme="dark"]`, or the OS preference when neither is set.
+ */
+
+/* ---------- token mapping (light) ---------- */
+:root {
+  --page:        var(--db-background, #FFFFFF);
+  --surface:     var(--db-card, #FFFFFF);
+  --surface-2:   var(--db-muted, #F4F5F7);
+  --ink:         var(--db-foreground, #162235);
+  --ink-2:       var(--db-muted-foreground, #606A79);
+  --muted:       var(--db-muted-foreground, #606A79);
+  --grid:        var(--db-border, #E3E6EB);
+  --baseline:    var(--db-border, #E3E6EB);
+  --border:      var(--db-border, #E3E6EB);
+  --dkls:        var(--db-chart-2, #05357E);
+  --dkls-soft:   var(--db-chart-3, #4070BF);
+  --dkls-softer: var(--db-secondary, #EBF0F9);
+  --dkls-deep:   var(--db-chart-1, #001760);
+  --cggmp:       var(--db-muted-foreground, #606A79);
+  --cggmp-soft:  #A7AEBB;
+  --cggmp-deep:  #3E4349;
+  --good:        #1A7F4B;
+
+  --db-card-shadow: 0 1px 2px rgba(10, 26, 49, 0.06);
+}
+
+/* ---------- token mapping (dark) ---------- */
+.dark,
+:root[data-theme="dark"] {
+  --page:        var(--db-background, #080B11);
+  --surface:     var(--db-card, #0C1015);
+  --surface-2:   var(--db-muted, #1F2226);
+  --ink:         var(--db-foreground, #F8F8F8);
+  --ink-2:       var(--db-muted-foreground, #A7AEBB);
+  --muted:       var(--db-muted-foreground, #A7AEBB);
+  --grid:        var(--db-border, #292B30);
+  --baseline:    var(--db-border, #292B30);
+  --border:      var(--db-border, #292B30);
+  --dkls:        #7BAEFF;
+  --dkls-soft:   #4070BF;
+  --dkls-softer: #1E3A5F;
+  --dkls-deep:   #A9DFFF;
+  --cggmp:       #A7AEBB;
+  --cggmp-soft:  #606A79;
+  --cggmp-deep:  #C7CDD6;
+  --good:        #4CC38A;
+
+  --db-card-shadow: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not(.dark) {
+    --page:        #080B11;
+    --surface:     #0C1015;
+    --surface-2:   #1F2226;
+    --ink:         #F8F8F8;
+    --ink-2:       #A7AEBB;
+    --muted:       #A7AEBB;
+    --grid:        #292B30;
+    --baseline:    #292B30;
+    --border:      #292B30;
+    --dkls:        #7BAEFF;
+    --dkls-soft:   #4070BF;
+    --dkls-softer: #1E3A5F;
+    --dkls-deep:   #A9DFFF;
+    --cggmp:       #A7AEBB;
+    --cggmp-soft:  #606A79;
+    --cggmp-deep:  #C7CDD6;
+    --good:        #4CC38A;
+    --db-card-shadow: none;
+  }
+}
+
+/* ---------- base type ---------- */
+body { font-family: var(--db-font-sans, "Stack Sans Text", system-ui, sans-serif); }
+h1, h2, h3, .chart-title { font-family: var(--db-font-heading, "Stack Sans Text", system-ui, sans-serif); }
+.mono, code, kbd, pre { font-family: var(--db-font-mono, "Geist Mono", ui-monospace, monospace); }
+a { color: var(--db-primary, #184691); }
+h1 { font-weight: 600; letter-spacing: -0.025em; line-height: 1; }
+h2 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+h3 { font-weight: 600; letter-spacing: -0.6px; }
+
+/* ---------- product nav bar ---------- */
+.brandbar {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px; padding: 0 clamp(16px, 4vw, 24px);
+  background: var(--page);
+  border-bottom: 1px solid var(--border);
+}
+.brandbar img { height: 26px; width: auto; display: block; }
+.brandbar-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--db-primary, #184691); color: var(--db-primary-foreground, #fff);
+  font-size: 14px; font-weight: 500; line-height: 1;
+  padding: 10px 16px; border-radius: var(--db-radius-md, 0);
+  text-decoration: none;
+  transition: background 120ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.brandbar-cta:hover { background: color-mix(in srgb, var(--db-primary, #184691) 90%, #000 10%); }
+
+/* ---------- side toc ---------- */
+nav.toc { top: 64px; height: calc(100vh - 64px); width: 210px; padding: 40px 20px 40px 0; border-right: 1px solid var(--border); }
+nav.toc .brand { font-family: var(--db-font-sans, "Stack Sans Text", sans-serif); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+nav.toc a { font-family: var(--db-font-sans, "Stack Sans Text", sans-serif); font-size: 14px; color: var(--ink-2); border-radius: var(--db-radius-xl, 4px); padding: 6px 10px; border-left: none; }
+nav.toc a:hover { color: var(--ink); background: var(--surface-2); }
+nav.toc .toc-group { font-family: var(--db-font-sans, sans-serif); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; color: var(--muted); }
+
+main { padding: 32px clamp(16px, 4vw, 24px) 96px; }
+
+/* ---------- hero card ---------- */
+header.hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--db-radius-xl, 4px);
+  box-shadow: var(--db-card-shadow);
+  padding: 40px clamp(20px, 4vw, 40px) 36px;
+  margin: 0 0 8px;
+}
+header.hero .eyebrow { margin: 0 0 16px; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+header.hero h1 { color: var(--ink); font-size: clamp(3rem, 2.4rem + 1.4vw, 3.75rem); }
+header.hero p { color: var(--ink-2); }
+header.hero p strong { color: var(--ink); }
+header.hero .kpi-row { margin-top: 28px; }
+header.hero .kpi { background: var(--surface-2); border-color: var(--border); }
+
+.kpi-row { gap: 16px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--db-radius-xl, 4px); box-shadow: var(--db-card-shadow); padding: 20px 22px; }
+.kpi .val { font-family: var(--db-font-heading, "Stack Sans Text", sans-serif); font-size: var(--db-text-heading-md, 36px); line-height: var(--db-leading-heading-md, 40px); letter-spacing: var(--db-tracking-heading-md, -0.9px); font-weight: 600; }
+.kpi .label { font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+
+/* ---------- sections ---------- */
+section { margin: 96px 0; }
+.section-num { font-family: var(--db-font-sans, sans-serif); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.section-head { gap: 12px; margin-bottom: 10px; }
+.group-divider { font-family: var(--db-font-sans, sans-serif); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; color: var(--muted); margin-top: 96px; }
+.group-divider::after { background: var(--border); }
+
+/* ---------- cards / charts ---------- */
+.panel { border: 1px solid var(--border); border-radius: var(--db-radius-xl, 4px); box-shadow: var(--db-card-shadow); padding: 24px clamp(16px, 2vw, 28px) 20px; }
+.chart-title { font-size: 16px; font-weight: 600; color: var(--ink); }
+.chart-sub { font-size: 13px; color: var(--muted); }
+.legend { font-size: 14px; color: var(--ink-2); }
+.legend .sw { border-radius: var(--db-radius-xs, 2px); }
+svg text { font-family: var(--db-font-sans, "Stack Sans Text", sans-serif); fill: var(--muted); }
+svg .axis-label { fill: var(--muted); }
+svg .grid-line { stroke: var(--grid); }
+svg .baseline { stroke: var(--baseline); }
+svg .value-label { fill: var(--ink); }
+
+/* ---------- tables (decibel: no header fill, no uppercase) ---------- */
+.table-wrap { border: 1px solid var(--border); border-radius: var(--db-radius-xl, 4px); }
+table { font-size: 14px; }
+thead th {
+  background: var(--surface); color: var(--muted);
+  font-family: var(--db-font-sans, "Stack Sans Text", sans-serif);
+  font-size: 13px; font-weight: 500; letter-spacing: 0; text-transform: none;
+  border-bottom: 1px solid var(--border);
+}
+tbody td { border-bottom: 1px solid var(--border); }
+tbody tr:hover td { background: var(--surface-2); }
+tbody tr.group-start td { border-top: 1px solid var(--border); }
+.tag-dkls { color: var(--dkls); }
+.tag-cggmp { color: var(--cggmp); }
+.pill-good { color: var(--good); }
+
+/* ---------- callouts / method ---------- */
+.callout { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--db-radius-xl, 4px); font-size: 14px; color: var(--ink-2); }
+.callout strong { color: var(--ink); }
+.callout.warn { background: var(--db-secondary, #EBF0F9); border-color: transparent; color: var(--db-secondary-foreground, #0D2141); }
+.callout.warn strong { color: var(--db-secondary-foreground, #0D2141); }
+.dark .callout.warn, :root[data-theme="dark"] .callout.warn { background: var(--db-secondary, #2F5EAB); color: var(--db-secondary-foreground, #A9DFFF); }
+.dark .callout.warn strong, :root[data-theme="dark"] .callout.warn strong { color: var(--db-secondary-foreground, #A9DFFF); }
+dl.method dt { font-family: var(--db-font-sans, sans-serif); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; color: var(--muted); }
+dl.method dd { color: var(--ink-2); font-size: 14px; }
+
+/* ---------- closing cta ---------- */
+.sl-cta { background: var(--db-primary, #184691); border-radius: var(--db-radius-2xl, 16px); padding: 56px clamp(24px, 4vw, 48px); margin: 96px 0 0; }
+.sl-eyebrow { margin: 0 0 16px; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255, 255, 255, 0.64); }
+.sl-cta h2 { color: #fff; font-size: clamp(2.25rem, 1.8rem + 1.2vw, 3rem); max-width: 24ch; margin: 0 0 28px; }
+.sl-cta-btn { display: inline-flex; align-items: center; min-height: 40px; padding: 0 24px; background: var(--db-primary-foreground, #fff); color: var(--db-primary, #184691); font-size: 14px; font-weight: 500; line-height: 1; text-decoration: none; border-radius: var(--db-radius-md, 0); transition: background 120ms cubic-bezier(0.4, 0, 0.2, 1); }
+.sl-cta-btn:hover { background: var(--db-accent, #F2F3F6); }
+.sl-copyright { margin: 28px 0 0; text-align: center; font-size: 13px; color: var(--muted); }
+
+@media print {
+  .brandbar, .sl-cta { display: none; }
+  header.hero { box-shadow: none; }
+  thead th { background: none; }
+  .panel, .kpi, .table-wrap { box-shadow: none; }
+}
+@media (max-width: 860px) {
+  .brandbar { position: static; }
+  nav.toc { top: 0; height: auto; border-right: none; }
+  section { margin: 64px 0; }
+}
