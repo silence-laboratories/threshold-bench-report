@@ -371,7 +371,7 @@
 
     <section id="bandwidth">
       <div class="section-head"><span class="section-num">05</span><h2>Bandwidth caps</h2></div>
-      <p>Signing with 100 requests in flight on n2d-standard-16, with each VM's outbound bandwidth capped at 20, 10, 5, 3, 2 and 1 Mbit/s. The unlimited point is the same VM size and load from section 02, with no cap. Each capped point is one 20-second run.</p>
+      <p>Signing with 100 requests in flight on n2d-standard-16, with each VM's outbound bandwidth capped at 20, 10, 5, 3, 2 and 1 Mbit/s. <strong>Scope update (2026-09-11): sub-gigabit caps are out of scope</strong> — the production baseline starts at 5 Gbit/s, so these points are archived for reference only, not a control point.</p>
 
       <div class="panel">
         <div class="panel-grid two" id="bw-charts"></div>
@@ -471,7 +471,10 @@
         </table>
       </div>
 
-      <p><strong>CGGMP sustained run reaches 50k.</strong> A CGGMP21 pool at c=50 (n2d-standard-16) produced 55,294 clean presignatures in 10,778.6 s before the hub's leaked websockets exhausted the ephemeral port range (249 HTTP 500s in the terminal storm). The 50,000 mark alone took ≈2 h 40 m — <strong>already longer than the entire 100,000-presign DKLS23 pool</strong> (1 h 46 m 38 s at c=1), despite 50-way concurrency. Root cause: the hub keeps one ESTAB websocket per presign (writer/reader tasks outlive the cancelled dial); fix by owning each connection in a single task, after which a 50k rerun fits the port budget.</p>
+      <h3 style="margin:28px 0 6px;">2026-09-11 re-validation (journaled runs)</h3>
+      <p>DKLS pools 1k/10k/100k at 4/8/16/32 vCPU (c=1, all 0 errors; 16 vCPU 100k = 6,394 s) and a real sustained 100k pool at 32 vCPU c=100: <strong>100,000 presigns in 293.9 s</strong> (≈340/s, p50 157 ms, p99 4.11 s) — the 45 s sweep had suggested ~126 s, so short cells overstate sustained throughput. EU+US pass: DKLS presign p50 943.7 ms / finish 398.8 ms; CGGMP presign 1,920.9 ms / finish 197.3 ms, verification 5/5 valid. Sub-gigabit bandwidth caps are out of scope (production baseline starts at 5 Gbit/s).</p>
+
+      <p><strong>Sustained CGGMP run — interrupted 100k (2026-09-11, earlier build).</strong> Target 100,000: 55,294 successes and 249 terminal errors before the hub's leaked websockets exhausted the ephemeral port range (10,778.6 s, then HTTP 500s in the terminal storm). <strong>Fixed:</strong> <span class="mono">dial_leaf</span> now owns both socket halves in a single task; a &gt;100k-session transport stress returns FDs and tasks to baseline (11→11, 1→1) and the live hub shows zero lingering hub→leaf ESTAB sockets. A clean CGGMP 100k rerun is scheduled separately.</p>
     </section>
 
     <div class="group-divider"><span>Method</span></div>
