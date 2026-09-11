@@ -451,6 +451,27 @@
       </div>
 
       <div class="callout" id="presign-callout"></div>
+
+      <h3 style="margin:28px 0 6px;">Concurrency: 45 s closed-loop cells</h3>
+      <p>Same-region sweep on four trios (4/8/16/32 vCPU): DKLS scales 169 → 321 → 586 → 795 presigns/s at c=100, while CGGMP is CPU-bound and plateaus near c=50 (~1/2/4/8 presigns/s); c=200 adds queueing only. Full 28-cell matrix: <span class="mono">results/presig-conc-summary.md</span>.</p>
+
+      <h3 style="margin:28px 0 6px;">Cross-region concurrency (west3 / north1 / us-east1, n2d-standard-16)</h3>
+      <p>Across regions DKLS is RTT-bound at c=1 (p50 ~937 ms) and scales linearly with concurrency; CGGMP is CPU-bound at ~4 presigns/s and extra concurrency only queues.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Protocol</th><th>Concurrency</th><th>Requests</th><th>Success</th><th>RPS</th><th>p50 ms</th><th>p99 ms</th><th>CPU %</th></tr></thead>
+          <tbody>
+            <tr class="group-start"><td>DKLS23</td><td>10</td><td>480</td><td>480/480</td><td>10.62</td><td>937.2</td><td>944.2</td><td>0.9</td></tr>
+            <tr><td>DKLS23</td><td>50</td><td>2,400</td><td>2400/2400</td><td>52.99</td><td>937.1</td><td>965.2</td><td>4.4</td></tr>
+            <tr><td>DKLS23</td><td>100</td><td>4,800</td><td>4800/4800</td><td>105.44</td><td>939.6</td><td>991.2</td><td>9.6</td></tr>
+            <tr class="group-start"><td>CGGMP21</td><td>10</td><td>155</td><td>155/155</td><td>3.24</td><td>3,076.8</td><td>3,601.4</td><td>29.1</td></tr>
+            <tr><td>CGGMP21</td><td>50</td><td>200</td><td>200/200</td><td>3.96</td><td>12,175.4</td><td>13,594.5</td><td>63.7</td></tr>
+            <tr><td>CGGMP21</td><td>100</td><td>223</td><td>223/223</td><td>3.87</td><td>22,854.2</td><td>38,719.5</td><td>62.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Sustained CGGMP run aborted.</strong> A 100,000-presignature CGGMP21 run (c=50, n2d-standard-16) stopped at 55,000 after 10,778 s with 249 HTTP 500s: the hub leaks one established websocket per presign — its writer/reader tasks outlive the cancelled dial — and the ~55k leaked sockets exhaust the ephemeral port range. Fix: own each connection in a single task (or close it explicitly), then rerun.</p>
     </section>
 
     <div class="group-divider"><span>Method</span></div>
