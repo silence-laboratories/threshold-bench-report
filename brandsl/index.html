@@ -471,7 +471,7 @@
         </table>
       </div>
 
-      <p><strong>Sustained CGGMP run aborted.</strong> A 100,000-presignature CGGMP21 run (c=50, n2d-standard-16) stopped at 55,000 after 10,778 s with 249 HTTP 500s: the hub leaks one established websocket per presign — its writer/reader tasks outlive the cancelled dial — and the ~55k leaked sockets exhaust the ephemeral port range. Fix: own each connection in a single task (or close it explicitly), then rerun.</p>
+      <p><strong>CGGMP sustained run reaches 50k.</strong> A CGGMP21 pool at c=50 (n2d-standard-16) produced 55,294 clean presignatures in 10,778.6 s before the hub's leaked websockets exhausted the ephemeral port range (249 HTTP 500s in the terminal storm). The 50,000 mark alone took ≈2 h 40 m — <strong>already longer than the entire 100,000-presign DKLS23 pool</strong> (1 h 46 m 38 s at c=1), despite 50-way concurrency. Root cause: the hub keeps one ESTAB websocket per presign (writer/reader tasks outlive the cancelled dial); fix by owning each connection in a single task, after which a 50k rerun fits the port budget.</p>
     </section>
 
     <div class="group-divider"><span>Method</span></div>
