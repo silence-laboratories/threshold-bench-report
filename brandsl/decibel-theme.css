@@ -198,6 +198,9 @@ dl.method dd { color: var(--ink-2); font-size: 14px; }
 }
 @media (max-width: 860px) {
   .brandbar { position: static; }
-  nav.toc { top: 0; height: auto; border-right: none; }
+  nav.toc {
+    top: 0; width: auto; height: auto; padding: 20px clamp(20px, 4vw, 56px) 0;
+    border-right: none; flex-direction: row; overflow-x: auto; white-space: nowrap; gap: 4px;
+  }
   section { margin: 64px 0; }
 }

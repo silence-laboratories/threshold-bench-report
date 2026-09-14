@@ -6,7 +6,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="stylesheet" href="decibel/fonts.css">
 <link rel="stylesheet" href="decibel/tokens.css">
-<title>DKLS23 vs CGGMP21 — 2-of-3 benchmark · Silence Laboratories</title>
+<title>DKLS23 vs CGGMP21 — benchmark comparison · Silence Laboratories</title>
 <style>
   
 
@@ -263,10 +263,10 @@
   <main>
     <header class="hero" id="overview">
       <p class="eyebrow">Benchmark · 2-of-3 threshold signatures</p>
-      <h1>DKLS23 vs CGGMP21</h1>
+      <h1>DKLS23 vs CGGMP21 — benchmark comparison</h1>
       <p style="margin-top:14px; max-width:70ch;">Two 2-of-3 threshold signature protocols, benchmarked on plain Ubuntu VMs in Google Cloud. DKLS23 runs from a pinned trio image; CGGMP21 is <span class="mono">LFDT-Lockness/cggmp21@b870883</span>.</p>
-      <p style="max-width:70ch;"><strong>DKG</strong> means generating a key. <strong>DSG</strong> means signing with a key that already exists. Both were measured on three VM sizes at loads from 1 to 200 requests in flight, then again with bandwidth capped, with delay added between the machines, and with the three machines spread across three regions.</p>
-      <p style="max-width:70ch;">The load always comes from a separate machine that is not one of the three parties. <a href="#setup">How this was run</a> covers the setup and where each number comes from.</p>
+      <p style="max-width:70ch;"><strong>DKG</strong> means generating a key. <strong>DSG</strong> means signing with a key that already exists. DKG and DSG were measured on three VM sizes at loads from 1 to 200 requests in flight, then again with bandwidth capped, with delay added between the machines, and with the three machines spread across three regions. Presigning was measured separately on four VM sizes.</p>
+      <p style="max-width:70ch;">The load always comes from a separate machine that is not one of the three parties. <a href="#setup">How this was run</a> covers the setup and where each number comes from. The interactive <a href="https://presign-calculator.demo.silencelaboratories.com/">presign calculator</a> is the source of truth for the latest presign comparison.</p>
 
       <div class="kpi-row" id="hero-kpis"></div>
     </header>
@@ -455,26 +455,46 @@
       <h3 style="margin:28px 0 6px;">Concurrency: 45 s closed-loop cells</h3>
       <p>Same-region sweep on four trios (4/8/16/32 vCPU): DKLS scales 169 → 321 → 586 → 795 presigns/s at c=100, while CGGMP is CPU-bound and plateaus near c=50 (~1/2/4/8 presigns/s); c=200 adds queueing only. Full 28-cell matrix: <span class="mono">results/presig-conc-summary.md</span>.</p>
 
-      <h3 style="margin:28px 0 6px;">Cross-region concurrency (west3 / north1 / us-east1, n2d-standard-16)</h3>
-      <p>Across regions DKLS is RTT-bound at c=1 (p50 ~937 ms) and scales linearly with concurrency; CGGMP is CPU-bound at ~4 presigns/s and extra concurrency only queues.</p>
+      <h3 style="margin:28px 0 6px;">Cross-region concurrency (west3 / north1 / us-east1, 4/8/16/32 vCPU)</h3>
+      <p>The final 2026-09-14 re-validation covers c=1/10/50/100 at every VM size for both protocols: 32 measured cells, all with zero errors. DKLS is RTT-bound at c=1 and reaches about 83 presigns/s at c=100 across all sizes. CGGMP is CPU-bound and scales from 1.26 presigns/s at 4 vCPU to 10.31 presigns/s at 32 vCPU at c=100.</p>
       <div class="table-wrap">
-        <table>
-          <thead><tr><th>Protocol</th><th>Concurrency</th><th>Requests</th><th>Success</th><th>RPS</th><th>p50 ms</th><th>p99 ms</th><th>CPU %</th></tr></thead>
+        <table id="presign-mr-table">
+          <thead><tr><th>vCPU</th><th>Protocol</th><th>c=1 RPS</th><th>c=10 RPS</th><th>c=50 RPS</th><th>c=100 RPS</th><th>Errors</th></tr></thead>
           <tbody>
-            <tr class="group-start"><td>DKLS23</td><td>10</td><td>480</td><td>480/480</td><td>10.62</td><td>937.2</td><td>944.2</td><td>0.9</td></tr>
-            <tr><td>DKLS23</td><td>50</td><td>2,400</td><td>2400/2400</td><td>52.99</td><td>937.1</td><td>965.2</td><td>4.4</td></tr>
-            <tr><td>DKLS23</td><td>100</td><td>4,800</td><td>4800/4800</td><td>105.44</td><td>939.6</td><td>991.2</td><td>9.6</td></tr>
-            <tr class="group-start"><td>CGGMP21</td><td>10</td><td>155</td><td>155/155</td><td>3.24</td><td>3,076.8</td><td>3,601.4</td><td>29.1</td></tr>
-            <tr><td>CGGMP21</td><td>50</td><td>200</td><td>200/200</td><td>3.96</td><td>12,175.4</td><td>13,594.5</td><td>63.7</td></tr>
-            <tr><td>CGGMP21</td><td>100</td><td>223</td><td>223/223</td><td>3.87</td><td>22,854.2</td><td>38,719.5</td><td>62.0</td></tr>
+            <tr class="group-start"><td>4</td><td>DKLS23</td><td>1.06</td><td>10.55</td><td>51.22</td><td>82.48</td><td>0</td></tr>
+            <tr><td>4</td><td>CGGMP21</td><td>0.48</td><td>1.24</td><td>1.32</td><td>1.26</td><td>0</td></tr>
+            <tr class="group-start"><td>8</td><td>DKLS23</td><td>1.06</td><td>10.55</td><td>52.54</td><td>83.70</td><td>0</td></tr>
+            <tr><td>8</td><td>CGGMP21</td><td>0.48</td><td>2.45</td><td>2.46</td><td>2.56</td><td>0</td></tr>
+            <tr class="group-start"><td>16</td><td>DKLS23</td><td>1.05</td><td>9.98</td><td>49.80</td><td>83.68</td><td>0</td></tr>
+            <tr><td>16</td><td>CGGMP21</td><td>0.48</td><td>4.02</td><td>5.03</td><td>5.15</td><td>0</td></tr>
+            <tr class="group-start"><td>32</td><td>DKLS23</td><td>1.05</td><td>10.51</td><td>52.51</td><td>83.93</td><td>0</td></tr>
+            <tr><td>32</td><td>CGGMP21</td><td>0.47</td><td>4.38</td><td>10.14</td><td>10.31</td><td>0</td></tr>
           </tbody>
         </table>
       </div>
 
-      <h3 style="margin:28px 0 6px;">2026-09-11 re-validation (journaled runs)</h3>
-      <p>DKLS pools 1k/10k/100k at 4/8/16/32 vCPU (c=1, all 0 errors; 16 vCPU 100k = 6,394 s) and a real sustained 100k pool at 32 vCPU c=100: <strong>100,000 presigns in 293.9 s</strong> (≈340/s, p50 157 ms, p99 4.11 s) — the 45 s sweep had suggested ~126 s, so short cells overstate sustained throughput. EU+US pass: DKLS presign p50 943.7 ms / finish 398.8 ms; CGGMP presign 1,920.9 ms / finish 197.3 ms, verification 5/5 valid. Sub-gigabit bandwidth caps are out of scope (production baseline starts at 5 Gbit/s).</p>
+      <h3 style="margin:28px 0 6px;">Final re-validation (2026-09-11 through 2026-09-14)</h3>
+      <p>DKLS c=1 pools of 1k/10k/100k were measured at 4/8/16/32 vCPU, all with zero errors. A sustained 100k pool at 32 vCPU and c=100 completed in <strong>293.9 s</strong> (about 340 presigns/s, p50 157 ms, p99 4.11 s). The cross-region DKLS 100k pool at 16 vCPU and c=100 completed in <strong>1,161.8 s</strong>, also with zero errors.</p>
 
-      <p><strong>Sustained CGGMP run — interrupted 100k (2026-09-11, earlier build).</strong> Target 100,000: 55,294 successes and 249 terminal errors before the hub's leaked websockets exhausted the ephemeral port range (10,778.6 s, then HTTP 500s in the terminal storm). <strong>Fixed:</strong> <span class="mono">dial_leaf</span> now owns both socket halves in a single task; a &gt;100k-session transport stress returns FDs and tasks to baseline (11→11, 1→1) and the live hub shows zero lingering hub→leaf ESTAB sockets. A clean CGGMP 100k rerun is scheduled separately.</p>
+      <p>After fixing the leaf-session leak, clean CGGMP c=50 pools of 100,000 presignatures completed at every measured size: <strong>20.77 h</strong> at 4 vCPU, <strong>10.36 h</strong> at 8 vCPU, <strong>5.18 h</strong> at 16 vCPU, and <strong>2.60 h</strong> at 32 vCPU. Every run completed 100,000/100,000 with zero retries and zero errors. The keygen completion path was also hardened with a persistence barrier before the final cross-region sweep.</p>
+
+      <div class="table-wrap">
+        <table id="presign-pool-table">
+          <thead><tr><th>vCPU</th><th>Protocol</th><th>Concurrency</th><th>100k wall time</th><th>Success</th><th>Errors</th></tr></thead>
+          <tbody>
+            <tr class="group-start"><td>4</td><td>DKLS23</td><td>1</td><td>1.71 h</td><td>100,000/100,000</td><td>0</td></tr>
+            <tr><td>4</td><td>CGGMP21</td><td>50</td><td>20.77 h</td><td>100,000/100,000</td><td>0</td></tr>
+            <tr class="group-start"><td>8</td><td>DKLS23</td><td>1</td><td>1.75 h</td><td>100,000/100,000</td><td>0</td></tr>
+            <tr><td>8</td><td>CGGMP21</td><td>50</td><td>10.36 h</td><td>100,000/100,000</td><td>0</td></tr>
+            <tr class="group-start"><td>16</td><td>DKLS23</td><td>1</td><td>1.78 h</td><td>100,000/100,000</td><td>0</td></tr>
+            <tr><td>16</td><td>CGGMP21</td><td>50</td><td>5.18 h</td><td>100,000/100,000</td><td>0</td></tr>
+            <tr class="group-start"><td>32</td><td>DKLS23</td><td>1</td><td>1.82 h</td><td>100,000/100,000</td><td>0</td></tr>
+            <tr><td>32</td><td>CGGMP21</td><td>50</td><td>2.60 h</td><td>100,000/100,000</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Sub-gigabit bandwidth caps remain archived sensitivity data only; the production baseline starts at 5 Gbit/s.</p>
     </section>
 
     <div class="group-divider"><span>Method</span></div>
