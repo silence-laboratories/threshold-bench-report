@@ -266,7 +266,7 @@
       <h1>DKLS23 vs CGGMP21 — benchmark comparison</h1>
       <p style="margin-top:14px; max-width:70ch;">Two 2-of-3 threshold signature protocols, benchmarked on plain Ubuntu VMs in Google Cloud. DKLS23 runs from a pinned trio image; CGGMP21 is <span class="mono">LFDT-Lockness/cggmp21@b870883</span>.</p>
       <p style="max-width:70ch;"><strong>DKG</strong> means generating a key. <strong>DSG</strong> means signing with a key that already exists. DKG and DSG were measured on three VM sizes at loads from 1 to 200 requests in flight, then again with bandwidth capped, with delay added between the machines, and with the three machines spread across three regions. Presigning was measured separately on four VM sizes.</p>
-      <p style="max-width:70ch;">The load always comes from a separate machine that is not one of the three parties. <a href="#setup">How this was run</a> covers the setup and where each number comes from. The interactive <a href="https://presign-calculator.demo.silencelaboratories.com/">presign calculator</a> is the source of truth for the latest presign comparison.</p>
+      <p style="max-width:70ch;">The load always comes from a separate machine that is not one of the three parties. <a href="#setup">How this was run</a> covers the setup and where each number comes from.</p>
 
       <div class="kpi-row" id="hero-kpis"></div>
     </header>
@@ -431,6 +431,7 @@
     <section id="presign">
       <div class="section-head"><span class="section-num">08</span><h2>Presigning, offline and online</h2></div>
       <p>Presigning produces a presignature with no message attached; the online finish phase consumes one to sign. Both protocols use two of the three parties per operation. Every row below is sequential — one request at a time — on n2d-standard-16 in one region, with each party VM's network counters read before and after the run and corrected for 120 seconds of measured idle traffic.</p>
+      <div class="callout"><strong>Interactive calculator.</strong> Compare protocol, pool size, VM size, concurrency, and topology in the <a href="https://presign-calculator.demo.silencelaboratories.com/" target="_blank" rel="noopener">presign calculator</a>.</div>
 
       <div class="panel">
         <div class="panel-grid two" id="presign-charts"></div>
