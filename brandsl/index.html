@@ -457,27 +457,27 @@
       <p>The original same-region sweep (2026-09-11, older binary) measured DKLS at 169 → 321 → 586 → 795 presigns/s at c=100 and CGGMP plateauing near c=50. It is kept in <span class="mono">results/presig-conc-summary.md</span> as history; the numbers below come from the 2026-09-15 single-boot re-measurements on the fixed binary.</p>
 
       <h3 style="margin:28px 0 6px;">Current-binary single-boot sweeps (2026-09-15)</h3>
-      <p>Each VM size was measured in one boot, with a fresh adapter work directory before every DKLS cell so no cell inherited state from the previous one. DKLS was pushed to c=400 (4 vCPU), c=800 (8), c=1600 (16) and c=2000 (32). Throughput peaks near c≈100–250 depending on size and then declines while queueing grows. CGGMP21 stays flat at <strong>10.2–10.4 presigns/s from c=50 to c=800</strong> with zero errors; only its latency grows (p50 4.73 s → 54.79 s), so raising C adds queueing without any throughput gain.</p>
+      <p>Each VM size was measured in one boot, with a fresh adapter work directory before every DKLS cell so no cell inherited state from the previous one. DKLS was pushed to c=400 (4 vCPU), c=800 (8), c=1600 (16) and c=2000 (32). Throughput peaks near c≈100–250 depending on size and then declines while queueing grows. CGGMP21 is flat at ~10.4 presigns/s at 32 vCPU through c=400 — only its latency grows (p50 4.7 s → 34.9 s) — and then starts failing: 31 errors at c=800 and hundreds from c=1200. At 8/16 vCPU the failure boundary is also c≈800; 4 vCPU stays clean through c=400. Its useful range is c=50–400.</p>
       <div class="table-wrap">
         <table id="presign-highc-table">
           <thead><tr><th>Concurrency</th><th>DKLS RPS</th><th>DKLS p50</th><th>DKLS errors</th><th>CGGMP RPS</th><th>CGGMP p50</th><th>CGGMP errors</th></tr></thead>
           <tbody>
-            <tr class="group-start"><td>10</td><td>117.62</td><td>66 ms</td><td>0</td><td>4.71</td><td>2.09 s</td><td>0</td></tr>
-            <tr><td>50</td><td>304.46</td><td>80 ms</td><td>0</td><td>10.21</td><td>4.73 s</td><td>0</td></tr>
-            <tr><td>100</td><td>341.43</td><td>142 ms</td><td>0</td><td>10.35</td><td>8.71 s</td><td>0</td></tr>
-            <tr><td>150</td><td>232.82</td><td>199 ms</td><td>1</td><td>—</td><td>—</td><td>—</td></tr>
-            <tr><td>200</td><td>213.21</td><td>268 ms</td><td>0</td><td>10.40</td><td>15.19 s</td><td>0</td></tr>
-            <tr><td>250</td><td>254.04</td><td>344 ms</td><td>0</td><td>—</td><td>—</td><td>—</td></tr>
-            <tr><td>400</td><td>213.28</td><td>548 ms</td><td>0</td><td>10.44</td><td>34.65 s</td><td>0</td></tr>
-            <tr><td>800</td><td>261.18</td><td>1.09 s</td><td>0</td><td>10.41</td><td>54.79 s</td><td>0</td></tr>
-            <tr><td>1200</td><td>248.54</td><td>2.15 s</td><td>0</td><td>—</td><td>—</td><td>—</td></tr>
-            <tr><td>1400</td><td>262.77</td><td>1.89 s</td><td>0</td><td>—</td><td>—</td><td>—</td></tr>
-            <tr><td>1600</td><td>164.63</td><td>9.23 s</td><td>0</td><td>—</td><td>—</td><td>—</td></tr>
-            <tr><td>2000</td><td>179.93</td><td>577 ms</td><td>0</td><td>—</td><td>—</td><td>—</td></tr>
+            <tr class="group-start"><td>10</td><td>117.62</td><td>66 ms</td><td>0</td><td>4.70</td><td>2.10 s</td><td>0</td></tr>
+            <tr><td>50</td><td>304.46</td><td>80 ms</td><td>0</td><td>10.36</td><td>4.71 s</td><td>0</td></tr>
+            <tr><td>100</td><td>341.43</td><td>142 ms</td><td>0</td><td>10.44</td><td>9.17 s</td><td>0</td></tr>
+            <tr><td>150</td><td>232.82</td><td>199 ms</td><td>1</td><td>10.44</td><td>12.99 s</td><td>0</td></tr>
+            <tr><td>200</td><td>213.21</td><td>268 ms</td><td>0</td><td>10.51</td><td>17.51 s</td><td>0</td></tr>
+            <tr><td>250</td><td>254.04</td><td>344 ms</td><td>0</td><td>10.46</td><td>18.71 s</td><td>0</td></tr>
+            <tr><td>400</td><td>213.28</td><td>548 ms</td><td>0</td><td>10.52</td><td>34.94 s</td><td>0</td></tr>
+            <tr><td>800</td><td>261.18</td><td>1.09 s</td><td>0</td><td>8.89</td><td>56.90 s</td><td>31</td></tr>
+            <tr><td>1200</td><td>248.54</td><td>2.15 s</td><td>0</td><td>9.00</td><td>59.24 s</td><td>265</td></tr>
+            <tr><td>1400</td><td>262.77</td><td>1.89 s</td><td>0</td><td>9.82</td><td>59.50 s</td><td>396</td></tr>
+            <tr><td>1600</td><td>164.63</td><td>9.23 s</td><td>0</td><td>9.20</td><td>58.26 s</td><td>594</td></tr>
+            <tr><td>2000</td><td>179.93</td><td>577 ms</td><td>0</td><td>10.49</td><td>55.23 s</td><td>1198</td></tr>
           </tbody>
         </table>
       </div>
-      <div class="callout"><strong>The 100k answer:</strong> for a 100k pool, the fastest clean settings measured were c=100–150 at 32 vCPU (<strong>352–354 s</strong>), c=100 at 16 vCPU (<strong>287 s</strong>), c=200 at 8 vCPU (<strong>402 s</strong>) and c=100 at 4 vCPU (<strong>634 s</strong>). c=200 at 32 vCPU also completed cleanly twice (372–376 s) but is 5–6% slower than c=100–150; one earlier boot failed c=200 with 19,268 request errors, so keep headroom. Concurrency past the knee buys queueing, not speed — most visibly for CGGMP21, which is flat from c=50 to c=800 while its p50 grows more than 10x. At sequential c=1 the same 100k takes <strong>1 h 49 m 25 s</strong> for DKLS23 (measured) versus an extrapolated <strong>≈73 h</strong> for CGGMP21 — that wider gap only applies to sequential settings; at its own best setting (c=50) CGGMP21 finishes in 2 h 36 m.</div>
+      <div class="callout"><strong>The 100k answer:</strong> for a 100k pool, the fastest clean settings measured were c=100–150 at 32 vCPU (<strong>352–354 s</strong>), c=100 at 16 vCPU (<strong>287 s</strong>), c=200 at 8 vCPU (<strong>402 s</strong>) and c=100 at 4 vCPU (<strong>634 s</strong>). c=200 at 32 vCPU also completed cleanly twice (372–376 s) but is 5–6% slower than c=100–150; one earlier boot failed c=200 with 19,268 request errors, so keep headroom. Concurrency past the knee buys queueing, not speed — most visibly for CGGMP21, which is flat from c=50 to c=400 (p50 grows ~7x) and errors from c≈800. At sequential c=1 the same 100k takes <strong>1 h 49 m 25 s</strong> for DKLS23 (measured) versus an extrapolated <strong>≈73 h</strong> for CGGMP21 — that wider gap only applies to sequential settings; at its own best setting (c=50) CGGMP21 finishes in 2 h 36 m.</div>
 
       <h3 style="margin:28px 0 6px;">Cross-region concurrency (west3 / north1 / us-east1, 4/8/16/32 vCPU)</h3>
       <p>The final 2026-09-14 re-validation covers c=1/10/50/100 at every VM size for both protocols: 32 measured cells, all with zero errors. DKLS is RTT-bound at c=1 and reaches about 83 presigns/s at c=100 across all sizes. CGGMP is CPU-bound and scales from 1.26 presigns/s at 4 vCPU to 10.31 presigns/s at 32 vCPU at c=100. Those CGGMP cells are 20–37% above the earlier same-region sweep, but the runs used a different VM trio; this is host/run variance, not evidence that added latency improves throughput.</p>
