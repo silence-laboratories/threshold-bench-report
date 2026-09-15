@@ -528,6 +528,33 @@
       </div>
 
       <p><strong>Bandwidth is not the binding constraint.</strong> One presign costs ≈120 KiB of aggregate party TX. The highest aggregate TX measured is 0.39 Gbit/s (16 vCPU c=100 short cell); the sustained 32 vCPU c=100 pool runs at ≈0.28 Gbit/s. A 1 Gbit/s link carries ≈1,000 presigns/s — above every measured compute ceiling (peak cell 396/s; sustained 282/s). With any link of 1 Gbit/s or more, compute saturates first, and a 5 Gbit/s production baseline is never approached in these measurements. Sub-gigabit caps remain archived sensitivity data only.</p>
+
+      <h3 style="margin:28px 0 6px;">Compute and bandwidth per transaction (32 vCPU, same region)</h3>
+      <div class="table-wrap">
+        <table id="presign-perf-table">
+          <thead><tr><th>Protocol</th><th>Operation</th><th>Compute per tx</th><th>Bytes per tx (one-way, all parties)</th><th>Sustained rate</th><th>Traffic at measured rate</th></tr></thead>
+          <tbody>
+            <tr class="group-start"><td>DKLS23</td><td>Presigning</td><td>0.11 core-s</td><td>120 KiB</td><td>282 presigns/s</td><td>0.28 Gbit/s</td></tr>
+            <tr><td>DKLS23</td><td>Online signing round</td><td>~7.5 ms p50</td><td>4.4 KB</td><td>—</td><td>—</td></tr>
+            <tr class="group-start"><td>CGGMP21</td><td>Presigning</td><td>3.0 core-s</td><td>88 KiB</td><td>10.7 presigns/s</td><td>7.7 Mbit/s</td></tr>
+            <tr><td>CGGMP21</td><td>Online signing round</td><td>~26 ms p50</td><td>4–7 KB</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Per presign, CGGMP21 spends ≈27× more compute and moves ≈28% fewer bytes. Both online rounds are small (4–7 KB) and finish in tens of milliseconds.</p>
+
+      <h3 style="margin:28px 0 6px;">Bytes vs the published dkls23 figures (per party)</h3>
+      <div class="table-wrap">
+        <table id="presign-bytes-table">
+          <thead><tr><th>Operation</th><th>dkls23 site (raw)</th><th>Our measurement (end-to-end)</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr class="group-start"><td>Presigning</td><td>(t−1)·57 KB = 57 KB</td><td>~61 KB</td><td>+7%, framing</td></tr>
+            <tr><td>Online signing</td><td>96 B</td><td>~2.2 KB</td><td>harness transport (~23×); the protocol itself is 96 B</td></tr>
+            <tr><td>DKG</td><td>(n−1)·53 KB = 106 KB</td><td>~150 KB</td><td>extra trio rounds + framing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Our end-to-end counters include WebSocket/HTTP framing, bincode headers and message signing; the published figures are protocol payload only.</p>
     </section>
 
     <div class="group-divider"><span>Method</span></div>
