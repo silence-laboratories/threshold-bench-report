@@ -454,10 +454,29 @@
       <div class="callout" id="presign-callout"></div>
 
       <h3 style="margin:28px 0 6px;">Concurrency: 45 s closed-loop cells</h3>
-      <p>Same-region sweep on four trios (4/8/16/32 vCPU): DKLS scales 169 → 321 → 586 → 795 presigns/s at c=100, while CGGMP is CPU-bound and plateaus near c=50 (~1/2/4/8 presigns/s); c=200 adds queueing only. Full 28-cell matrix: <span class="mono">results/presig-conc-summary.md</span>.</p>
+      <p>The original same-region sweep on four trios (4/8/16/32 vCPU) measured DKLS at 169 → 321 → 586 → 795 presigns/s at c=100, while CGGMP plateaued near c=50 (~1/2/4/8 presigns/s). In that sweep DKLS c=200 added queueing and did not improve throughput; CGGMP c=200 was not measured. Full 28-cell matrix: <span class="mono">results/presig-conc-summary.md</span>.</p>
+
+      <h3 style="margin:28px 0 6px;">Current-binary high-concurrency stress boundary (32 vCPU)</h3>
+      <p>The 2026-09-15 pass extended concurrency through c=1600. DKLS used a fresh adapter work directory before every cell so unused presign files from one cell could not affect the next. DKLS completed every 45 s cell without errors and peaked at c=200, but throughput fell beyond that point while tail latency grew. CGGMP stayed near 10.1–10.4 presigns/s through c=800, then began returning <span class="mono">timeout waiting for 1 leaves (have 0)</span>.</p>
+      <div class="table-wrap">
+        <table id="presign-highc-table">
+          <thead><tr><th>Concurrency</th><th>DKLS RPS</th><th>DKLS p50</th><th>DKLS errors</th><th>CGGMP RPS</th><th>CGGMP p50</th><th>CGGMP errors</th></tr></thead>
+          <tbody>
+            <tr class="group-start"><td>50</td><td>86.87</td><td>564 ms</td><td>0</td><td>10.12</td><td>4.79 s</td><td>0</td></tr>
+            <tr><td>100</td><td>161.98</td><td>591 ms</td><td>0</td><td>10.22</td><td>9.15 s</td><td>0</td></tr>
+            <tr><td>200</td><td>349.49</td><td>362 ms</td><td>0</td><td>10.28</td><td>16.95 s</td><td>0</td></tr>
+            <tr><td>400</td><td>296.33</td><td>579 ms</td><td>0</td><td>10.38</td><td>35.30 s</td><td>0</td></tr>
+            <tr><td>800</td><td>254.19</td><td>1.13 s</td><td>0</td><td>10.35</td><td>59.20 s</td><td>0</td></tr>
+            <tr><td>1200</td><td>124.02</td><td>8.18 s</td><td>0</td><td>8.58</td><td>65.65 s</td><td>196</td></tr>
+            <tr><td>1400</td><td>195.91</td><td>3.00 s</td><td>0</td><td>8.67</td><td>66.39 s</td><td>373</td></tr>
+            <tr><td>1600</td><td>162.78</td><td>9.14 s</td><td>0</td><td>8.70</td><td>63.82 s</td><td>559</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout"><strong>Sustained production boundary:</strong> short-cell throughput alone is not sufficient. The isolated DKLS c=100 run completed 100,000/100,000 in 427.3 s with zero errors. At c=200, 19,268 of 100,000 requests failed. The highest tested safe DKLS setting for a 100k pool therefore remains c=100. CGGMP's useful setting remains c=50 because higher clean cells add latency without meaningful throughput.</div>
 
       <h3 style="margin:28px 0 6px;">Cross-region concurrency (west3 / north1 / us-east1, 4/8/16/32 vCPU)</h3>
-      <p>The final 2026-09-14 re-validation covers c=1/10/50/100 at every VM size for both protocols: 32 measured cells, all with zero errors. DKLS is RTT-bound at c=1 and reaches about 83 presigns/s at c=100 across all sizes. CGGMP is CPU-bound and scales from 1.26 presigns/s at 4 vCPU to 10.31 presigns/s at 32 vCPU at c=100.</p>
+      <p>The final 2026-09-14 re-validation covers c=1/10/50/100 at every VM size for both protocols: 32 measured cells, all with zero errors. DKLS is RTT-bound at c=1 and reaches about 83 presigns/s at c=100 across all sizes. CGGMP is CPU-bound and scales from 1.26 presigns/s at 4 vCPU to 10.31 presigns/s at 32 vCPU at c=100. Those CGGMP cells are 20–37% above the earlier same-region sweep, but the runs used a different VM trio; this is host/run variance, not evidence that added latency improves throughput.</p>
       <div class="table-wrap">
         <table id="presign-mr-table">
           <thead><tr><th>vCPU</th><th>Protocol</th><th>c=1 RPS</th><th>c=10 RPS</th><th>c=50 RPS</th><th>c=100 RPS</th><th>Errors</th></tr></thead>
@@ -474,8 +493,8 @@
         </table>
       </div>
 
-      <h3 style="margin:28px 0 6px;">Final re-validation (2026-09-11 through 2026-09-14)</h3>
-      <p>DKLS c=1 pools of 1k/10k/100k were measured at 4/8/16/32 vCPU, all with zero errors. A sustained 100k pool at 32 vCPU and c=100 completed in <strong>293.9 s</strong> (about 340 presigns/s, p50 157 ms, p99 4.11 s). The cross-region DKLS 100k pool at 16 vCPU and c=100 completed in <strong>1,161.8 s</strong>, also with zero errors.</p>
+      <h3 style="margin:28px 0 6px;">Final re-validation (2026-09-11 through 2026-09-15)</h3>
+      <p>DKLS c=1 pools of 1k/10k/100k were measured at 4/8/16/32 vCPU, all with zero errors. An earlier same-region 100k pool at 32 vCPU and c=100 completed cleanly in <strong>293.9 s</strong>; the current-binary isolated rerun completed cleanly in <strong>427.3 s</strong> (about 234 presigns/s, p50 172 ms, p99 8.81 s). The calculator uses the later, conservative result and exposes the difference as host/run variance. The cross-region DKLS 100k pool at 16 vCPU and c=100 completed in <strong>1,161.8 s</strong>, also with zero errors.</p>
 
       <p>After fixing the leaf-session leak, clean CGGMP c=50 pools of 100,000 presignatures completed at every measured size: <strong>20.77 h</strong> at 4 vCPU, <strong>10.36 h</strong> at 8 vCPU, <strong>5.18 h</strong> at 16 vCPU, and <strong>2.60 h</strong> at 32 vCPU. Every run completed 100,000/100,000 with zero retries and zero errors. The keygen completion path was also hardened with a persistence barrier before the final cross-region sweep.</p>
 
@@ -491,6 +510,8 @@
             <tr><td>16</td><td>CGGMP21</td><td>50</td><td>5.18 h</td><td>100,000/100,000</td><td>0</td></tr>
             <tr class="group-start"><td>32</td><td>DKLS23</td><td>1</td><td>1.82 h</td><td>100,000/100,000</td><td>0</td></tr>
             <tr><td>32</td><td>CGGMP21</td><td>50</td><td>2.60 h</td><td>100,000/100,000</td><td>0</td></tr>
+            <tr class="group-start"><td>32</td><td>DKLS23</td><td>100</td><td>7m 07s</td><td>100,000/100,000</td><td>0</td></tr>
+            <tr><td>32</td><td>DKLS23</td><td>200</td><td>5m 49s (failed)</td><td>80,732/100,000</td><td>19,268</td></tr>
           </tbody>
         </table>
       </div>
