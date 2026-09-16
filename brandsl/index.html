@@ -454,7 +454,7 @@
       <div class="callout" id="presign-callout"></div>
 
       <h3 style="margin:28px 0 6px;">Throughput vs concurrency (measured pools only)</h3>
-      <p>Test grid: 10,000 and 100,000 presignatures, 4/16/32 vCPU, concurrency 1, 10, 50, 200, 400 and 800, same region. Every point in the two chart sets and the measured table is a completed timed pool run on the current binary; the page's only estimates sit in the clearly marked 100,000 table below. A red <span style="color:#c0392b;font-weight:700">F</span> marks the measured failure boundary: a setting where completed runs started returning request errors.</p>
+      <p>Test grid: 10,000 and 100,000 presignatures, 4/16/32 vCPU, concurrency 1, 10, 50, 200, 400 and 800, same region. Every point in the two chart sets and in the table is a completed timed pool run on the current binary, except the rows marked †, which are estimates derived from measured rates. A red <span style="color:#c0392b;font-weight:700">F</span> marks the measured failure boundary: a setting where completed runs started returning request errors.</p>
 
       <div class="panel">
         <div class="panel-grid two" id="conc-charts"></div>
@@ -473,24 +473,8 @@
       <div class="table-wrap">
         <table id="presign-pool-table"></table>
       </div>
+      <p class="chart-sub" style="margin-top:6px;">† estimated pool time derived from the measured 10k run (×10) or the measured c=1 rate; not a completed 100k run.</p>
       <div class="callout" id="conc-callout"></div>
-
-      <h3 style="margin:28px 0 6px;">Estimated 100,000 pools (10k rates × 10)</h3>
-      <p>These CGGMP21 cells were not measured end-to-end in this revision, so the pool time is an estimate: the measured 10k run multiplied by ten, or the measured steady-state c=1 rate. The ×10 factor matches every CGGMP21 100k run that did complete, to within 1% (7,503 s → 74,772 s at c=50, 4 vCPU; 936 s → 9,362 s at c=50, 32 vCPU). Settings where the 10k run itself fails (c=200 and c=400 on 4 vCPU, c=800 on 16 vCPU) are not estimated.</p>
-      <div class="table-wrap">
-        <table id="derived-100k-table">
-          <thead><tr><th>VM</th><th>Protocol</th><th>Pool</th><th>c</th><th>Estimated pool time</th><th>Basis</th></tr></thead>
-          <tbody>
-<!-- DERIVED-ROWS -->
-<tr><td>4 vCPU</td><td>CGGMP21</td><td>100,000</td><td>c=1</td><td>54h 54m</td><td>c=1 rate: 0.51 presigns/s (measured, CPU-independent)</td></tr>
-<tr><td>4 vCPU</td><td>CGGMP21</td><td>100,000</td><td>c=10</td><td>20h 48m</td><td>measured 10k c=10: 7,485.9 s × 10</td></tr>
-<tr><td>16 vCPU</td><td>CGGMP21</td><td>100,000</td><td>c=1</td><td>54h 54m</td><td>c=1 rate: 0.51 presigns/s (measured, CPU-independent)</td></tr>
-<tr><td>32 vCPU</td><td>CGGMP21</td><td>100,000</td><td>c=1</td><td>54h 54m</td><td>measured 10k c=1: 19,762.7 s × 10</td></tr>
-<tr><td>32 vCPU</td><td>CGGMP21</td><td>100,000</td><td>c=10</td><td>5h 46m</td><td>measured 10k c=10: 2,073.2 s × 10</td></tr>
-<!-- /DERIVED-ROWS -->
-          </tbody>
-        </table>
-      </div>
 
       <h3 style="margin:28px 0 6px;">Cross-region pools (west3 / north1 / us-east1)</h3>
       <p>The same presign grid across three regions. DKLS signing legs cross the Atlantic (client adapter in us-east1-b calling the trio in europe-west3-a and europe-north1-a); CGGMP signs between the two European VMs. Measured cells only, table form for now; the cross-region chart set lands with the calculator refresh.</p>
@@ -932,16 +916,24 @@
     });
 
     const prow = r => `<span class="${r.proto === "dkls" ? "pdkls" : "pcggmp"}">${pname(r.proto)}</span>`;
+    const estRows = (RD.derived_100k || []).map(r => ({
+      size: r.size, proto: "cggmp", count: 100000, c: r.c, t: r.t, est: true,
+      rps: Math.round((100000 / r.t) * 100) / 100
+    }));
+    const poolRows = RD.sr.concat(estRows).sort((a, b) =>
+      (a.proto < b.proto ? -1 : a.proto > b.proto ? 1 : 0)
+      || a.count - b.count || a.size - b.size || a.c - b.c);
     tbl("presign-pool-table",
       ["VM", "Protocol", "Pool", "c", "Success", "Pool time", "Presigns/s", "P50", "P99"],
-      RD.sr.map((r, i) => ({
-        grp: i === 0 || RD.sr[i - 1].size !== r.size || RD.sr[i - 1].proto !== r.proto,
+      poolRows.map((r, i) => ({
+        grp: i === 0 || poolRows[i - 1].size !== r.size || poolRows[i - 1].proto !== r.proto,
         cells: [r.size + " vCPU", prow(r), nfmt(r.count), "c=" + r.c,
-          r.err > 0
-            ? `<span style="color:#c0392b">${nfmt(r.ok || (r.count - r.err))}/${nfmt(r.count)} · F${nfmt(r.err)}</span>`
-            : `${nfmt(r.ok || r.count)}/${nfmt(r.count)}`,
-          fmtDur(r.t), fmt(r.rps, r.rps < 10 ? 2 : 1),
-          fmtMs(r.p50), fmtMs(r.p99)]
+          r.est ? "—"
+            : r.err > 0
+              ? `<span style="color:#c0392b">${nfmt(r.ok || (r.count - r.err))}/${nfmt(r.count)} · F${nfmt(r.err)}</span>`
+              : `${nfmt(r.ok || r.count)}/${nfmt(r.count)}`,
+          r.est ? fmtDur(r.t) + " †" : fmtDur(r.t), fmt(r.rps, r.rps < 10 ? 2 : 1),
+          r.est ? "—" : fmtMs(r.p50), r.est ? "—" : fmtMs(r.p99)]
       })));
     tbl("presign-mr-table",
       ["VM", "Protocol", "Pool", "c", "Success", "Pool time", "Presigns/s"],
