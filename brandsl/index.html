@@ -454,7 +454,7 @@
       <div class="callout" id="presign-callout"></div>
 
       <h3 style="margin:28px 0 6px;">Throughput vs concurrency (measured pools only)</h3>
-      <p>Test grid: 10,000 and 100,000 presignatures, 4/16/32 vCPU, concurrency 1, 10, 50, 200, 400 and 800, same region. Every point is a completed timed pool run on the current binary; nothing in this section is extrapolated. A red <span style="color:#c0392b;font-weight:700">F</span> marks a run that finished with request errors, which is the measured failure boundary, not a throughput point. Settings left unmeasured (runs beyond a day, or outside this grid) are absent rather than guessed; the interactive calculator further down this page carries the wider grid with every cell labelled measured, failed or not measured.</p>
+      <p>Test grid: 10,000 and 100,000 presignatures, 4/16/32 vCPU, concurrency 1, 10, 50, 200, 400 and 800, same region. Every point is a completed timed pool run on the current binary; nothing in this section is extrapolated. A red <span style="color:#c0392b;font-weight:700">F</span> marks the measured failure boundary: a setting where completed runs started returning request errors.</p>
 
       <div class="panel">
         <div class="panel-grid two" id="conc-charts"></div>
